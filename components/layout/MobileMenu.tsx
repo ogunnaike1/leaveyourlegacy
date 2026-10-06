@@ -14,7 +14,7 @@ export default function MobileMenu() {
       aria-hidden={!menu}
     >
       <div className="h-[64px] flex items-center justify-between">
-        <Logo size={11} />
+        <Logo size={17} />
         <button onClick={() => set({ menu: false })} className="appearance-none [background:none] border-0 text-inherit [font:500_12px/1_var(--font-sans)] tracking-[.14em] uppercase py-[14px] px-0 cursor-pointer">Close</button>
       </div>
       <nav className="flex flex-col gap-[4px] mt-[9vh]">

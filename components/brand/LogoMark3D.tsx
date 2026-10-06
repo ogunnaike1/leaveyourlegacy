@@ -1,29 +1,29 @@
 'use client';
 import { useMemo } from 'react';
 import * as THREE from 'three';
-import { MARK_PARTS } from './Logo';
+import { SVGLoader } from 'three/examples/jsm/loaders/SVGLoader.js';
+import { MARK_D, MARK_H, MARK_W } from './mark-path';
 
 /**
- * The brand mark extruded from the exact 2D geometry (MARK_PARTS, 48-unit grid). `width` is the mark's width in
- * metres; it is centred on the group origin with the face pointing +Z. Bevels are kept tiny so the edges catch
- * light like machined metal without rounding the architecture away.
+ * The brand mark extruded from its vector path. `height` is the mark's height in metres; it is centred on the
+ * group origin with the face pointing +Z. A small bevel lets the edges catch light like machined brass.
  */
-export default function LogoMark3D({ width = 0.6, depth = 0.025, material, castShadow = true }: { width?: number; depth?: number; material: THREE.Material; castShadow?: boolean }) {
+export default function LogoMark3D({ height = 0.6, depth = 0.04, material, castShadow = true }: { height?: number; depth?: number; material: THREE.Material; castShadow?: boolean }) {
   const geometry = useMemo(() => {
-    const s = width / 40; // mark spans x 4 → 44 (40 units)
-    const shapes = MARK_PARTS.map(p => {
-      const pts: [number, number][] = p.kind === 'rect'
-        ? [[p.d[0], p.d[1]], [p.d[0] + p.d[2], p.d[1]], [p.d[0] + p.d[2], p.d[1] + p.d[3]], [p.d[0], p.d[1] + p.d[3]]]
-        : Array.from({ length: p.d.length / 2 }, (_, i) => [p.d[i * 2], p.d[i * 2 + 1]] as [number, number]);
-      // SVG y runs down; flip it and centre the 48-grid mark (bounds x 4–44, y 6–42).
-      return new THREE.Shape(pts.map(([x, y]) => new THREE.Vector2((x - 24) * s, (24 - y) * s)));
-    });
-    const bevel = Math.min(depth * 0.18, width * 0.004);
-    const g = new THREE.ExtrudeGeometry(shapes, { depth: depth - bevel * 2, bevelEnabled: true, bevelThickness: bevel, bevelSize: bevel * 0.6, bevelSegments: 2, curveSegments: 1 });
-    g.translate(0, 0, -depth / 2);
+    const data = new SVGLoader().parse(`<svg xmlns="http://www.w3.org/2000/svg"><path d="${MARK_D}"/></svg>`);
+    const shapes = data.paths.flatMap(p => SVGLoader.createShapes(p));
+    const s = height / MARK_H;
+    const bevel = (depth * 0.15) / s;
+    // Short trace segments need few divisions; 3 keeps curves smooth while the build stays fast.
+    const g = new THREE.ExtrudeGeometry(shapes, { depth: depth / s - bevel * 2, bevelEnabled: true, bevelThickness: bevel, bevelSize: bevel * 0.5, bevelSegments: 2, curveSegments: 3 });
+    // SVG space (y down) → centred, y up. A 180° turn about X (not a negative scale) keeps the face winding intact.
+    g.translate(-MARK_W / 2, -MARK_H / 2, 0);
+    g.rotateX(Math.PI);
+    g.scale(s, s, s);
+    g.translate(0, 0, depth / 2);
     g.computeVertexNormals();
     return g;
-  }, [width, depth]);
+  }, [height, depth]);
 
   return <mesh geometry={geometry} material={material} castShadow={castShadow} receiveShadow />;
 }

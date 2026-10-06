@@ -84,6 +84,7 @@ function makeMaterials(lite: boolean) {
       bumpMap: tex(noiseCanvas(256, '#808080', 0, { n: 90, min: 1, max: 4, a: 0.35 }, 70), false, 4), bumpScale: 0.35
     }),
     walnut: new THREE.MeshStandardMaterial({ map: tex(walnutCanvas, true, 1), roughness: 0.55, metalness: 0, envMapIntensity: 0.6 }),
+    brass: new THREE.MeshStandardMaterial({ color: '#c09a62', roughness: 0.38, metalness: 0.85, envMapIntensity: 1.3 }),
     urethane: new THREE.MeshStandardMaterial({ color: '#151514', roughness: 0.68, metalness: 0, envMapIntensity: 0.7 }),
     ceiling: new THREE.MeshStandardMaterial({ color: '#2a2724', roughness: 1 }),
     skirting: new THREE.MeshStandardMaterial({ color: '#2a2622', roughness: 0.9 }),
@@ -157,9 +158,9 @@ function Room({ M }: { M: Mats }) {
           );
         })}
       </group>
-      {/* Brand mark in brushed aluminium, stood off the plaster inside the warm wall wash */}
-      <group position={[0.8, 0.95, -3.4 + 0.0145]}>
-        <LogoMark3D width={0.5} depth={0.025} material={M.alu} />
+      {/* Brand mark in brushed brass, stood off the plaster inside the warm wall wash */}
+      <group position={[0.8, 1.0, -3.4 + 0.016]}>
+        <LogoMark3D height={0.62} depth={0.028} material={M.brass} />
       </group>
       <group position={[3.1, 0, -2.6]}>
         <Cyl r={0.11} l={1.2} m={M.plaster} seg={40} p={[0, 0.6, 0]} />

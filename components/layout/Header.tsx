@@ -16,13 +16,12 @@ type Props = { dark?: boolean; current?: '' | 'shop' | 'gym' | 'home' | 'collect
 export default function Header({ dark: darkProp = false, current = '' }: Props) {
   const [dark, setDark] = useState(!!darkProp);
   const [scrolled, setScrolled] = useState(false);
-  const [hidden, setHidden] = useState(false);
   const [bump, setBump] = useState(false);
   const { menu, search, cart, set } = useUI();
   const lines = useCart(s => s.lines);
   const vw = useVw();
   const pathname = usePathname();
-  const st = useRef({ dark: !!darkProp, scrolled: false, hidden: false, lastY: 0, raf: 0 });
+  const st = useRef({ dark: !!darkProp, scrolled: false, raf: 0 });
 
   // Every page load starts with overlays closed (the prototype navigated by full reload).
   useEffect(() => { set({ menu: false, search: false, cart: false }); }, [pathname, set]);
@@ -39,7 +38,6 @@ export default function Header({ dark: darkProp = false, current = '' }: Props) 
 
   useEffect(() => {
     const s = st.current;
-    s.lastY = window.scrollY;
     const onScroll = () => {
       if (s.raf) return;
       s.raf = requestAnimationFrame(() => {
@@ -47,11 +45,9 @@ export default function Header({ dark: darkProp = false, current = '' }: Props) 
         const y = window.scrollY;
         let d = !!darkProp;
         document.querySelectorAll('[data-theme]').forEach(el => { const r = el.getBoundingClientRect(); if (r.top <= 38 && r.bottom > 38) d = el.getAttribute('data-theme') === 'dark'; });
-        const h = y > 600 && y > s.lastY + 4 ? true : (y < s.lastY - 4 ? false : s.hidden);
-        s.lastY = y;
-        if (d !== s.dark || (y > 8) !== s.scrolled || h !== s.hidden) {
-          s.dark = d; s.scrolled = y > 8; s.hidden = h;
-          setDark(d); setScrolled(y > 8); setHidden(h);
+        if (d !== s.dark || (y > 8) !== s.scrolled) {
+          s.dark = d; s.scrolled = y > 8;
+          setDark(d); setScrolled(y > 8);
         }
       });
     };
@@ -69,17 +65,20 @@ export default function Header({ dark: darkProp = false, current = '' }: Props) 
   }, [menu, cart, search]);
 
   const isMobile = vw < 900;
-  const overHero = dark && !scrolled;
+  // Sticky bar: transparent at the top of every page; once scrolled it fills with the colour of the section
+  // underneath (charcoal over dark sections, stone over light), tightens its height and lifts with a shadow.
   const fg = dark ? '#F2EFEA' : '#1C1B19';
-  const bg = overHero ? 'transparent' : (dark ? 'rgba(21,20,19,.72)' : 'rgba(242,239,234,.86)');
-  const blur = overHero ? 'none' : 'saturate(1.2) blur(14px)';
-  const rule = overHero ? 'transparent' : (dark ? 'rgba(242,239,234,.08)' : 'rgba(28,27,25,.08)');
+  const bg = !scrolled ? 'rgba(0,0,0,0)' : (dark ? 'rgba(20,19,17,.94)' : 'rgba(242,239,234,.94)');
+  const blur = !scrolled ? 'none' : 'saturate(1.2) blur(14px)';
+  const rule = !scrolled ? 'transparent' : (dark ? 'rgba(242,239,234,.1)' : 'rgba(28,27,25,.1)');
+  const shadow = !scrolled ? 'none' : (dark ? '0 10px 30px rgba(0,0,0,.35)' : '0 10px 30px rgba(28,27,25,.08)');
+  const height = isMobile ? (scrolled ? 56 : 64) : (scrolled ? 64 : 76);
 
   return (
     <>
       <header
-        className="fixed top-0 left-0 right-0 z-50 grid grid-cols-[1fr_auto_1fr] items-center px-[clamp(20px,3.4vw,48px)] font-sans [border-bottom:1px_solid] [transition:background_.5s_ease,color_.5s_ease,border-color_.5s_ease,transform_.6s_cubic-bezier(.7,0,.2,1)]"
-        style={{ height: isMobile ? '64px' : '76px', color: fg, background: bg, backdropFilter: blur, WebkitBackdropFilter: blur, borderBottomColor: rule, transform: hidden && !menu ? 'translateY(-100%)' : 'translateY(0)' }}
+        className="fixed top-0 left-0 right-0 z-50 grid grid-cols-[1fr_auto_1fr] items-center px-[clamp(20px,3.4vw,48px)] font-sans [border-bottom:1px_solid] [transition:background_.5s_ease,color_.5s_ease,border-color_.5s_ease,box-shadow_.5s_ease,height_.45s_cubic-bezier(.2,.7,.2,1)]"
+        style={{ height, color: fg, background: bg, backdropFilter: blur, WebkitBackdropFilter: blur, borderBottomColor: rule, boxShadow: shadow }}
       >
         <div className="flex items-center gap-[28px]">
           {isMobile ? (
@@ -89,7 +88,7 @@ export default function Header({ dark: darkProp = false, current = '' }: Props) 
             </button>
           ) : (
             <Link href="/" aria-label="Leave Your Legacy — home" className="text-inherit no-underline flex items-center">
-              <Logo size={12} showWordmark={vw >= 1280} />
+              <Logo size={19} showWordmark={vw >= 1180} />
             </Link>
           )}
         </div>
@@ -105,7 +104,7 @@ export default function Header({ dark: darkProp = false, current = '' }: Props) 
         )}
         {isMobile && (
           <Link href="/" aria-label="Leave Your Legacy — home" className="text-inherit no-underline flex items-center">
-            <LogoMark size={28} title="" />
+            <LogoMark size={34} title="" />
           </Link>
         )}
         <div className="flex justify-end items-center gap-[6px]">

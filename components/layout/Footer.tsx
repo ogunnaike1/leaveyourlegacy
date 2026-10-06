@@ -54,7 +54,7 @@ export default function Footer() {
           <span className="text-[#E4DFD8] leading-[1.6]">Kalkbreite 4<br />8003 Zürich<br />By appointment</span>
         </div>
       </div>
-      <WordmarkFit className="text-[#2A2826] select-none" />
+      <WordmarkFit className="text-[#2A2826] select-none" accent="#3A3128" />
       <div className="flex flex-wrap justify-between gap-[16px] pt-[28px] [font:400_11px/1_var(--font-mono)] tracking-[.08em] uppercase text-[#8A857D]">
         <span>© 2026 Leave Your Legacy</span>
         <div className="flex gap-[24px]"><Link href="/" className="text-inherit no-underline">Privacy</Link><Link href="/" className="text-inherit no-underline">Terms</Link></div>

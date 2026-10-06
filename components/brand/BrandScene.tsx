@@ -1,5 +1,5 @@
 'use client';
-// Interactive 3D logo: the extruded mark in brushed steel on a walnut plinth, same environment and tone mapping
+// Interactive 3D logo: the extruded mark in brushed brass on a walnut plinth, same environment and tone mapping
 // as the hero room. Turns slowly on its own; drag to rotate.
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import { useEffect, useMemo, useRef, useState } from 'react';
@@ -12,7 +12,7 @@ function Turntable({ reduced }: { reduced: boolean }) {
   const drag = useRef({ on: false, x: 0, v: 0 });
   const { gl } = useThree();
   const mats = useMemo(() => ({
-    steel: new THREE.MeshStandardMaterial({ color: '#c9ccce', metalness: 1, roughness: 0.28, envMapIntensity: 1.1 }),
+    steel: new THREE.MeshStandardMaterial({ color: '#c09a62', metalness: 0.85, roughness: 0.38, envMapIntensity: 1.3 }),
     walnut: new THREE.MeshStandardMaterial({ color: '#4a3326', roughness: 0.55, metalness: 0, envMapIntensity: 0.6 })
   }), []);
 
@@ -31,9 +31,9 @@ function Turntable({ reduced }: { reduced: boolean }) {
   }, [gl]);
 
   return (
-    <group ref={g} position={[0, 0.05, 0]}>
-      <group position={[0, 0.315, 0]}><LogoMark3D width={0.7} depth={0.06} material={mats.steel} /></group>
-      <mesh material={mats.walnut} position={[0, -0.03, 0]} castShadow receiveShadow><boxGeometry args={[0.9, 0.06, 0.24]} /></mesh>
+    <group ref={g} position={[0, 0.05, 0]} rotation={[0, -0.55, 0]}>
+      <group position={[0, 0.39, 0]}><LogoMark3D height={0.78} depth={0.08} material={mats.steel} /></group>
+      <mesh material={mats.walnut} position={[0, -0.03, 0]} castShadow receiveShadow><boxGeometry args={[0.86, 0.06, 0.26]} /></mesh>
     </group>
   );
 }

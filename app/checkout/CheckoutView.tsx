@@ -46,7 +46,7 @@ export default function CheckoutView() {
   return (
     <div className="font-sans text-[#1C1B19] bg-[#F7F5F1] min-h-screen">
       <header className="h-[76px] flex justify-between items-center p-[0_clamp(20px,3.4vw,48px)] [border-bottom:1px_solid_rgba(28,27,25,.1)]">
-        <Link href="/" aria-label="Leave Your Legacy — home" className="text-inherit no-underline flex items-center"><Logo size={11} /></Link>
+        <Link href="/" aria-label="Leave Your Legacy — home" className="text-inherit no-underline flex items-center"><Logo size={18} /></Link>
         <Link href="/shop" className="text-[13px] text-[#4A4743] no-underline">← Continue shopping</Link>
       </header>
 

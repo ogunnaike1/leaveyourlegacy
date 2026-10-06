@@ -1,10 +1,12 @@
 import type { Metadata } from 'next';
-import { Archivo, Instrument_Serif, JetBrains_Mono } from 'next/font/google';
+import { Archivo, Instrument_Serif, JetBrains_Mono, Jost } from 'next/font/google';
 import MotionRoot from '@/components/motion/MotionRoot';
 import './globals.css';
 
 const archivo = Archivo({ subsets: ['latin'], axes: ['wdth'], variable: '--font-archivo', display: 'swap' });
 const instrument = Instrument_Serif({ subsets: ['latin'], weight: '400', style: ['normal', 'italic'], variable: '--font-instrument', display: 'swap' });
+// Jost sets the brand wordmark (matches the supplied logo's lowercase geometric sans).
+const jost = Jost({ subsets: ['latin'], weight: ['400', '500'], variable: '--font-jost', display: 'swap' });
 const jetbrains = JetBrains_Mono({ subsets: ['latin'], weight: ['400', '500'], variable: '--font-jetbrains', display: 'swap' });
 
 // Glyphs outside the latin subset (→ ← ✓ ★) must fall back to the generic sans/serif/monospace faces, as they
@@ -14,7 +16,8 @@ const primary = (f: { style: { fontFamily: string } }) => f.style.fontFamily.spl
 const fontVars = {
   '--font-archivo': primary(archivo),
   '--font-instrument': primary(instrument),
-  '--font-jetbrains': primary(jetbrains)
+  '--font-jetbrains': primary(jetbrains),
+  '--font-jost': primary(jost)
 } as React.CSSProperties;
 
 export const metadata: Metadata = {
@@ -26,7 +29,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${archivo.variable} ${instrument.variable} ${jetbrains.variable}`} style={fontVars}>
+    <html lang="en" className={`${archivo.variable} ${instrument.variable} ${jetbrains.variable} ${jost.variable}`} style={fontVars}>
       <body>
         {children}
         <MotionRoot />

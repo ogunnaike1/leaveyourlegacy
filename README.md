@@ -56,4 +56,8 @@ All other imagery is still placeholder. To add a shot, drop the file into `publi
 
 ## Brand
 
-The mark is L·Y·L: two L's facing each other with a Y rising between them, all three standing on one baseline. It's drawn on a 48-unit grid, and `MARK_PARTS` in `components/brand/Logo.tsx` is the single source for the SVG, the favicon (`app/icon.svg`) and the 3D extrusion. The 3D mark appears on the back wall of the hero room and on a turntable at `/brand`. That page also documents the logo, clear space, type and colour, and links the files in `public/brand/`: SVG marks, PNG lockups, the 3D render and `og.png`.
+The logo comes from the supplied artwork in `public/brand/logo-original.png`.
+- **Mark:** two stepped L's joined by a sweep, traced to a vector path in `components/brand/mark-path.ts`. That one path drives the SVG mark, the favicon (`app/icon.svg`) and the 3D extrusion (`LogoMark3D`).
+- **Wordmark:** "leaveyourlegacy" in Jost, with "your" in brass.
+- **Colour:** brass (#A8865A) is the original gold, toned to sit with the site's charcoal and stone. Use charcoal or stone for one-colour versions.
+- **3D:** a brass mark hangs on the back wall of the hero room, and `/brand` has a turntable version. That page also documents the system and links the files in `public/brand/`.
