@@ -5,6 +5,22 @@ import { useCart, cartLines, cartCount, cartSubtotal } from '@/lib/cart-store';
 import { money } from '@/lib/format';
 import ImageSlot from '@/components/ui/ImageSlot';
 import { Logo } from '@/components/brand/Logo';
+import { findPromo, type Promo } from '@/lib/promo';
+import { saveOrder } from '@/lib/orders';
+
+// Card checks run before an order is accepted: Luhn-valid number, unexpired MM/YY, 3–4 digit CVC.
+const luhn = (n: string) => { let sum = 0; for (let i = 0; i < n.length; i++) { let d = +n[n.length - 1 - i]; if (i % 2) { d *= 2; if (d > 9) d -= 9; } sum += d; } return sum % 10 === 0; };
+function cardErrors(f: FormData) {
+  const e: Record<string, string> = {};
+  const num = String(f.get('cardNumber') || '').replace(/\s+/g, '');
+  if (!/^\d{13,19}$/.test(num) || !luhn(num)) e.cardNumber = 'Enter a valid card number.';
+  const m = String(f.get('cardExpiry') || '').match(/^\s*(\d{1,2})\s*\/\s*(\d{2})\s*$/);
+  const now = new Date();
+  if (!m || +m[1] < 1 || +m[1] > 12 || new Date(2000 + +m[2], +m[1], 1) <= now) e.cardExpiry = 'Enter a valid expiry date (MM / YY).';
+  if (!/^\d{3,4}$/.test(String(f.get('cardCvc') || '').trim())) e.cardCvc = 'Enter the 3 or 4 digit code.';
+  if (!String(f.get('cardName') || '').trim()) e.cardName = 'Enter the name on the card.';
+  return e;
+}
 
 // Inputs: 54px, 1px rgba(28,27,25,.22) border, white fill, charcoal border on focus.
 const field = 'h-[54px] p-[0_16px] [border:1px_solid_rgba(28,27,25,.22)] bg-white text-[15px] text-[#1C1B19] [font-family:inherit] focus:outline-none focus:!border-[#1C1B19]';
@@ -26,22 +42,45 @@ export default function CheckoutView() {
   const [pay, setPay] = useState(0);
   const [placed, setPlaced] = useState(false);
   const [orderNo, setOrderNo] = useState('');
+  const [code, setCode] = useState('');
+  const [promo, setPromo] = useState<Promo | null>(null);
+  const [codeMsg, setCodeMsg] = useState('');
+  const [errs, setErrs] = useState<Record<string, string>>({});
+  const apply = () => {
+    if (!code.trim()) { setCodeMsg('Enter a code.'); return; }
+    const p = findPromo(code);
+    if (p) { setPromo(p); setCodeMsg(p.label + ' applied.'); } else { setPromo(null); setCodeMsg('That code isn’t recognised.'); }
+  };
 
   const lines = cartLines(raw);
   const sub = cartSubtotal(raw);
   const shipPrice = ships[ship].price;
-  const total = sub + shipPrice;
+  const discount = promo ? Math.round(sub * promo.percent) / 100 : 0;
+  const total = sub - discount + shipPrice;
   const empty = lines.length === 0;
   const payNote = pay === 1
     ? 'We will email bank details with your confirmation. Your order is reserved for 7 days and scheduled for delivery once payment clears.'
     : 'Split the total into three interest-free payments over 60 days. You will be redirected to confirm after placing the order.';
 
-  const submit = (e: FormEvent) => {
+  const submit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!lines.length) return;
+    const f = new FormData(e.currentTarget);
+    const ce = pay === 0 ? cardErrors(f) : {};
+    setErrs(ce);
+    if (Object.keys(ce).length) return;
     const no = 'LYL-' + Math.floor(100000 + Math.random() * 899999);
+    const g = (k: string) => String(f.get(k) || '').trim();
+    saveOrder({
+      no, placedAt: new Date().toISOString(), email, name: g('firstName') + ' ' + g('lastName'),
+      address: [g('address'), g('apartment'), g('city') + ' ' + g('postcode'), g('country')].filter(Boolean).join(', '),
+      shipping: ships[ship].name, payment: pays[pay],
+      lines: lines.map(l => ({ id: l.id, name: l.product.name, color: l.color, qty: l.qty, price: l.product.price })),
+      subtotal: sub, discount, code: promo?.code || '', shippingPrice: shipPrice, total
+    });
     clear(); setOrderNo(no); setPlaced(true); window.scrollTo(0, 0);
   };
+  const errText = (k: string) => errs[k] ? <span role="alert" className="text-[13px] text-[#9B3B2E] col-[1/-1]">{errs[k]}</span> : null;
 
   return (
     <div className="font-sans text-[#1C1B19] bg-[#F7F5F1] min-h-screen">
@@ -55,6 +94,7 @@ export default function CheckoutView() {
           <span className="[font:400_11px/1_var(--font-mono)] tracking-[.14em] uppercase text-[#6B6761]">Order {orderNo}</span>
           <h1 className="m-0 font-medium [font-stretch:82%] text-[clamp(48px,7vw,96px)] leading-[.9] tracking-[-.03em] uppercase">Thank you.</h1>
           <p className="m-0 text-[17px] leading-[1.6] text-[#3A3835] max-w-[520px]">A confirmation is on its way to {email}. Our delivery team will call within two working days to arrange a time.</p>
+          <Link href="/account" className="self-start text-[#1C1B19] text-[13px] tracking-[.06em] underline-offset-[5px]">View your orders</Link>
           <Link href="/" className="self-start mt-[16px] inline-flex items-center h-[54px] p-[0_30px] bg-[#1C1B19] text-[#F2EFEA] hover:text-[#F2EFEA] no-underline text-[12px] font-medium tracking-[.14em] uppercase">Back to Leave Your Legacy</Link>
         </section>
       ) : (
@@ -64,20 +104,20 @@ export default function CheckoutView() {
 
             <fieldset className="border-0 m-0 p-0 flex flex-col gap-[14px]">
               <legend className={legend}><span className={legendNum}>01</span>Contact</legend>
-              <input type="email" required placeholder="Email" value={email} onChange={e => setEmail(e.target.value)} className={field + ' [transition:border-color_.2s]'} />
-              <input type="tel" placeholder="Phone (for delivery scheduling)" className={field} />
+              <input type="email" name="email" autoComplete="email" required placeholder="Email" value={email} onChange={e => setEmail(e.target.value)} className={field + ' [transition:border-color_.2s]'} />
+              <input type="tel" name="phone" autoComplete="tel" placeholder="Phone (for delivery scheduling)" className={field} />
               <label className="flex gap-[10px] items-center text-[14px] text-[#4A4743] cursor-pointer"><input type="checkbox" className="w-[16px] h-[16px] accent-[#1C1B19] m-0" /> Email me about new pieces and product drops</label>
             </fieldset>
 
             <fieldset className="border-0 m-0 p-0 grid grid-cols-[repeat(auto-fit,minmax(min(100%,200px),1fr))] gap-[14px]">
               <legend className={legend}><span className={legendNum}>02</span>Delivery</legend>
-              <input required placeholder="First name" className={field} />
-              <input required placeholder="Last name" className={field} />
-              <input required placeholder="Address" className={field + ' col-[1/-1]'} />
-              <input placeholder="Apartment, floor, access notes (optional)" className={field + ' col-[1/-1]'} />
-              <input required placeholder="City" className={field} />
-              <input required placeholder="Postcode" className={field} />
-              <select className={field + ' col-[1/-1]'}>
+              <input name="firstName" autoComplete="given-name" required placeholder="First name" className={field} />
+              <input name="lastName" autoComplete="family-name" required placeholder="Last name" className={field} />
+              <input name="address" autoComplete="address-line1" required placeholder="Address" className={field + ' col-[1/-1]'} />
+              <input name="apartment" autoComplete="address-line2" placeholder="Apartment, floor, access notes (optional)" className={field + ' col-[1/-1]'} />
+              <input name="city" autoComplete="address-level2" required placeholder="City" className={field} />
+              <input name="postcode" autoComplete="postal-code" required placeholder="Postcode" className={field} />
+              <select name="country" autoComplete="country-name" className={field + ' col-[1/-1]'}>
                 <option>Switzerland</option><option>Germany</option><option>United Kingdom</option><option>United States</option><option>France</option><option>Netherlands</option>
               </select>
             </fieldset>
@@ -110,10 +150,10 @@ export default function CheckoutView() {
               </div>
               {pay === 0 ? (
                 <div className="grid grid-cols-[repeat(auto-fit,minmax(min(100%,160px),1fr))] gap-[14px]">
-                  <input required inputMode="numeric" placeholder="Card number" className={field + ' col-[1/-1]'} />
-                  <input required placeholder="MM / YY" className={field} />
-                  <input required placeholder="CVC" className={field} />
-                  <input required placeholder="Name on card" className={field + ' col-[1/-1]'} />
+                  <input name="cardNumber" autoComplete="cc-number" required inputMode="numeric" placeholder="Card number" className={field + ' col-[1/-1]'} />{errText('cardNumber')}
+                  <input name="cardExpiry" autoComplete="cc-exp" required placeholder="MM / YY" className={field} />
+                  <input name="cardCvc" autoComplete="cc-csc" required inputMode="numeric" placeholder="CVC" className={field} />{errText('cardExpiry')}{errText('cardCvc')}
+                  <input name="cardName" autoComplete="cc-name" required placeholder="Name on card" className={field + ' col-[1/-1]'} />{errText('cardName')}
                 </div>
               ) : (
                 <p className="m-0 p-[18px_16px] bg-[#EFEBE5] text-[14px] leading-[1.6] text-[#4A4743]">{payNote}</p>
@@ -142,11 +182,13 @@ export default function CheckoutView() {
               </div>
             ))}
             <div className="flex gap-[8px] pt-[20px] [border-top:1px_solid_rgba(28,27,25,.12)]">
-              <input placeholder="Gift card or code" className="flex-1 min-w-0 h-[48px] p-[0_14px] [border:1px_solid_rgba(28,27,25,.22)] bg-white text-[14px] text-[#1C1B19] [font-family:inherit] focus:outline-none focus:!border-[#1C1B19]" />
-              <button type="button" className="h-[48px] p-[0_18px] [border:1px_solid_#1C1B19] bg-transparent [font:500_11px/1_var(--font-sans)] tracking-[.12em] uppercase text-[#1C1B19] cursor-pointer">Apply</button>
+              <input aria-label="Gift card or code" value={code} onChange={e => setCode(e.target.value)} onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); apply(); } }} placeholder="Gift card or code" className="flex-1 min-w-0 h-[48px] p-[0_14px] [border:1px_solid_rgba(28,27,25,.22)] bg-white text-[14px] text-[#1C1B19] [font-family:inherit] focus:outline-none focus:!border-[#1C1B19]" />
+              <button type="button" onClick={apply} className="h-[48px] p-[0_18px] [border:1px_solid_#1C1B19] bg-transparent [font:500_11px/1_var(--font-sans)] tracking-[.12em] uppercase text-[#1C1B19] cursor-pointer">Apply</button>
             </div>
+            {codeMsg && <span role="status" className={'text-[13px] -mt-[8px] ' + (promo ? 'text-[#5E7A5A]' : 'text-[#9B3B2E]')}>{codeMsg}</span>}
             <div className="flex flex-col gap-[10px] text-[14px] text-[#3A3835]">
               <div className="flex justify-between"><span>Subtotal</span><span className="font-mono text-[13px]">{money(sub)}</span></div>
+              {promo && <div className="flex justify-between"><span>Discount ({promo.code})</span><span className="font-mono text-[13px]">−{money(discount)}</span></div>}
               <div className="flex justify-between"><span>Shipping</span><span className="font-mono text-[13px]">{shipPrice ? money(shipPrice) : 'Included'}</span></div>
               <div className="flex justify-between"><span>VAT (8.1%, included)</span><span className="font-mono text-[13px]">{money(total - total / 1.081)}</span></div>
             </div>

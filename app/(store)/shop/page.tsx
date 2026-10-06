@@ -16,13 +16,14 @@ export default async function ShopPage({ searchParams }: { searchParams: Promise
   const init = {
     cat: one(q.c) || 'All',
     line: one(q.line),
+    q: one(q.q),
     sort: SORTS.includes(sort) ? sort : 'featured',
     sel: { price: list(q.price), equipment: list(q.equipment), color: list(q.color), avail: list(q.avail) }
   };
   return (
     <div data-theme="light" className="font-sans text-[#1C1B19] bg-[#F7F5F1] min-h-screen">
       {/* Keyed by the entry URL so header links (Shop / Gym / Home) start a fresh view, as a page load did. */}
-      <ShopView key={init.cat + '|' + init.line} init={init} />
+      <ShopView key={init.cat + '|' + init.line + '|' + init.q} init={init} />
       <Footer />
     </div>
   );

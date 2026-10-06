@@ -3,6 +3,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { useAnimate } from 'framer-motion';
 import { useSearchParams } from 'next/navigation';
 import { products, type Product } from '@/lib/catalogue';
+import { searchProducts } from '@/lib/search';
 import { useVw } from '@/lib/use-vw';
 import Header from '@/components/layout/Header';
 import LineReveal from '@/components/motion/LineReveal';
@@ -23,11 +24,13 @@ const titles: Record<string, [string, string]> = {
   home: ['Home', 'Mirrors, light, textiles and storage — made in the same workshops, to the same tolerances.']
 };
 
-export type ShopInit = { cat: string; line: string; sort: Sort; sel: Sel };
+export type ShopInit = { cat: string; line: string; sort: Sort; sel: Sel; q: string };
 
 export default function ShopView({ init }: { init: ShopInit }) {
   const [cat, setCat] = useState(init.cat);
   const [line, setLine] = useState(init.line);
+  const [q, setQ] = useState(init.q);
+  const search = q.trim();
   const [sel, setSel] = useState<Sel>(init.sel);
   const [sort, setSort] = useState<Sort>(init.sort);
   const vw = useVw();
@@ -56,7 +59,7 @@ export default function ShopView({ init }: { init: ShopInit }) {
     if (written.current === null || spStr === written.current) return;
     const q = new URLSearchParams(spStr), list = (g: string) => (q.get(g) || '').split(',').filter(Boolean);
     const so = q.get('sort') as Sort;
-    setCat(q.get('c') || 'All'); setLine(q.get('line') || '');
+    setCat(q.get('c') || 'All'); setLine(q.get('line') || ''); setQ(q.get('q') || '');
     setSort(['featured', 'price-asc', 'price-desc', 'name'].includes(so) ? so : 'featured');
     setSel({ price: list('price'), equipment: list('equipment'), color: list('color'), avail: list('avail') });
   }, [spStr]);
@@ -64,15 +67,16 @@ export default function ShopView({ init }: { init: ShopInit }) {
     const q = new URLSearchParams();
     if (cat !== 'All') q.set('c', cat);
     if (line) q.set('line', line);
+    if (search) q.set('q', search);
     if (sort !== 'featured') q.set('sort', sort);
     (Object.keys(sel) as Group[]).forEach(g => { if (sel[g].length) q.set(g, sel[g].join(',')); });
     const s = q.toString();
     written.current = s;
     window.history.replaceState(window.history.state, '', location.pathname + (s ? '?' + s : ''));
-  }, [cat, line, sort, sel]);
+  }, [cat, line, sort, sel, search]);
 
   const v = useMemo(() => {
-    const base = line ? products.filter(p => p.line === line) : products;
+    const base = searchProducts(search, line ? products.filter(p => p.line === line) : products);
     const test = (p: Product, skip?: Group) => (cat === 'All' || p.category === cat)
       && (skip === 'price' || !sel.price.length || sel.price.some(key => { const r = ranges.find(x => x.k === key)!; return p.price >= r.a && p.price < r.b; }))
       && (skip === 'equipment' || !sel.equipment.length || sel.equipment.includes(p.equipment))
@@ -97,16 +101,19 @@ export default function ShopView({ init }: { init: ShopInit }) {
       { title: 'Availability', options: ['In stock', 'Made to order'].map(a => opt('avail', a, pool('avail').filter(p => availOf(p) === a).length)) }
     ];
     const chips: Chip[] = [];
+    if (search) chips.unshift({ label: '“' + search + '”', remove: () => setQ('') });
     (Object.keys(sel) as Group[]).forEach(g => sel[g].forEach(val => chips.push({ label: val, remove: () => toggle(g, val) })));
     return { items, cats, groups, chips };
-  }, [cat, line, sel, sort]);
+  }, [cat, line, sel, sort, search]);
 
-  const t = titles[line] || ['Shop', 'Equipment, accessories and objects for rooms where training is part of living.'];
-  const title = cat !== 'All' && !line ? cat : t[0];
-  const nSel = v.chips.length;
   const count = v.items.length;
+  const t = search
+    ? ['Search', count ? `${count} ${count === 1 ? 'piece matches' : 'pieces match'} “${search}”.` : `Nothing matches “${search}”. Try “bench”, “walnut” or “leather”.`]
+    : titles[line] || ['Shop', 'Equipment, accessories and objects for rooms where training is part of living.'];
+  const title = search ? t[0] : cat !== 'All' && !line ? cat : t[0];
+  const nSel = v.chips.length - (search ? 1 : 0);
   const filterLabel = m ? 'Filter' + (nSel ? ' (' + nSel + ')' : '') : (open ? 'Hide filters' : 'Show filters') + (nSel ? ' (' + nSel + ')' : '');
-  const clearAll = () => setSel(EMPTY);
+  const clearAll = () => { setSel(EMPTY); setQ(''); };
   const closeFilters = () => setOpen(m ? false : open);
 
   return (

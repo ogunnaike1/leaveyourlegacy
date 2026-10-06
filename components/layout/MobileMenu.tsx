@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { useUI } from '@/lib/cart-store';
 import { NAV } from './nav';
 import { Logo } from '@/components/brand/Logo';
+import { SITE } from '@/lib/site';
 
 export default function MobileMenu() {
   const menu = useUI(s => s.menu);
@@ -29,10 +30,10 @@ export default function MobileMenu() {
         ))}
       </nav>
       <div className="mt-auto flex flex-wrap gap-[12px_24px] text-[13px] text-[#B9B3AA]">
-        <Link href="/checkout" className="text-inherit no-underline">Account</Link>
-        <Link href="/#journal" className="text-inherit no-underline">Shipping &amp; Returns</Link>
-        <Link href="/" className="text-inherit no-underline">Contact</Link>
-        <Link href="/" className="text-inherit no-underline">Instagram</Link>
+        <Link href="/account" onClick={() => set({ menu: false })} className="text-inherit no-underline">Account</Link>
+        <Link href="/shipping" onClick={() => set({ menu: false })} className="text-inherit no-underline">Shipping &amp; Returns</Link>
+        <Link href="/contact" onClick={() => set({ menu: false })} className="text-inherit no-underline">Contact</Link>
+        <a href={SITE.instagram} target="_blank" rel="noopener noreferrer" className="text-inherit no-underline">Instagram</a>
       </div>
     </div>
   );

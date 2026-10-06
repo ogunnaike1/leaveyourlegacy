@@ -1,5 +1,7 @@
 'use client';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { searchProducts } from '@/lib/search';
 import { useEffect, useRef, useState } from 'react';
 import { useUI } from '@/lib/cart-store';
 import { products } from '@/lib/catalogue';
@@ -10,6 +12,7 @@ export default function SearchSheet() {
   const set = useUI(s => s.set);
   const [q, setQ] = useState('');
   const ref = useRef<HTMLInputElement>(null);
+  const router = useRouter();
 
   useEffect(() => {
     if (!search) return;
@@ -18,7 +21,14 @@ export default function SearchSheet() {
   }, [search]);
 
   const query = q.trim().toLowerCase();
-  const results = (query ? products.filter(p => (p.name + ' ' + p.type + ' ' + p.category + ' ' + p.materials).toLowerCase().includes(query)) : products.filter(p => p.best)).slice(0, 8);
+  const all = query ? searchProducts(query) : products.filter(p => p.best);
+  const results = all.slice(0, 8);
+  // Enter: a single match opens that product; otherwise the full results in the shop.
+  const go = () => {
+    if (!query) return;
+    set({ search: false });
+    router.push(all.length === 1 ? '/products/' + all[0].id : '/shop?q=' + encodeURIComponent(q.trim()));
+  };
   const close = () => set({ search: false });
 
   return (
@@ -34,7 +44,8 @@ export default function SearchSheet() {
           <button onClick={close} className="appearance-none [background:none] border-0 [font:inherit] [letter-spacing:inherit] [text-transform:inherit] text-[#1C1B19] cursor-pointer py-[12px] px-0">Close</button>
         </div>
         <input
-          ref={ref} value={q} onChange={e => setQ(e.target.value)} placeholder="Bench, dumbbells, mirror…"
+          ref={ref} value={q} onChange={e => setQ(e.target.value)} onKeyDown={e => { if (e.key === 'Enter') go(); }}
+          type="search" aria-label="Search products" placeholder="Bench, dumbbells, mirror…"
           className="w-full mt-[16px] border-0 [border-bottom:1px_solid_#1C1B19] bg-transparent outline-none font-sans font-normal [font-stretch:90%] text-[clamp(32px,5vw,64px)] tracking-[-.02em] p-[8px_0_16px] text-[#1C1B19]"
         />
         <div className="grid grid-cols-[repeat(auto-fill,minmax(240px,1fr))] gap-[0_32px] mt-[24px]">
@@ -45,7 +56,12 @@ export default function SearchSheet() {
             </Link>
           ))}
         </div>
-        {!!query && results.length === 0 && (
+        {!!query && all.length > 0 && (
+          <button onClick={go} className="mt-[24px] appearance-none [background:none] border-0 p-0 [font:500_12px/1_var(--font-sans)] tracking-[.12em] uppercase text-[#1C1B19] underline underline-offset-[5px] cursor-pointer">
+            View all {all.length} {all.length === 1 ? 'result' : 'results'} →
+          </button>
+        )}
+        {!!query && all.length === 0 && (
           <p className="m-[24px_0_0] text-[14px] text-[#6B6761]">Nothing matches that yet. Try “bench” or “walnut”.</p>
         )}
       </div>

@@ -112,7 +112,7 @@ export default function Header({ dark: darkProp = false, current = '' }: Props) 
             <svg width="19" height="19" viewBox="0 0 24 24" style={{ fill: 'none', stroke: 'currentColor', strokeWidth: 1.4, strokeLinecap: 'round' }}><circle cx="11" cy="11" r="7.5" /><path d="m20.5 20.5-4.2-4.2" /></svg>
           </button>
           {!isMobile && (
-            <Link href="/checkout" aria-label="Account" className="text-inherit w-[44px] h-[44px] flex items-center justify-center">
+            <Link href="/account" aria-label="Account" className="text-inherit w-[44px] h-[44px] flex items-center justify-center">
               <svg width="19" height="19" viewBox="0 0 24 24" style={{ fill: 'none', stroke: 'currentColor', strokeWidth: 1.4, strokeLinecap: 'round' }}><circle cx="12" cy="8" r="4.5" /><path d="M20 21a8 8 0 0 0-16 0" /></svg>
             </Link>
           )}
