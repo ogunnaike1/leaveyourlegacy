@@ -4,6 +4,7 @@ import { useState, type FormEvent } from 'react';
 import { useCart, cartLines, cartCount, cartSubtotal } from '@/lib/cart-store';
 import { money } from '@/lib/format';
 import ImageSlot from '@/components/ui/ImageSlot';
+import { Logo } from '@/components/brand/Logo';
 
 // Inputs: 54px, 1px rgba(28,27,25,.22) border, white fill, charcoal border on focus.
 const field = 'h-[54px] p-[0_16px] [border:1px_solid_rgba(28,27,25,.22)] bg-white text-[15px] text-[#1C1B19] [font-family:inherit] focus:outline-none focus:!border-[#1C1B19]';
@@ -38,14 +39,14 @@ export default function CheckoutView() {
   const submit = (e: FormEvent) => {
     e.preventDefault();
     if (!lines.length) return;
-    const no = 'HLD-' + Math.floor(100000 + Math.random() * 899999);
+    const no = 'LYL-' + Math.floor(100000 + Math.random() * 899999);
     clear(); setOrderNo(no); setPlaced(true); window.scrollTo(0, 0);
   };
 
   return (
     <div className="font-sans text-[#1C1B19] bg-[#F7F5F1] min-h-screen">
       <header className="h-[76px] flex justify-between items-center p-[0_clamp(20px,3.4vw,48px)] [border-bottom:1px_solid_rgba(28,27,25,.1)]">
-        <Link href="/" className="text-inherit no-underline font-semibold [font-stretch:118%] text-[16px] tracking-[.34em]">HALDEN</Link>
+        <Link href="/" aria-label="Leave Your Legacy — home" className="text-inherit no-underline flex items-center"><Logo size={11} /></Link>
         <Link href="/shop" className="text-[13px] text-[#4A4743] no-underline">← Continue shopping</Link>
       </header>
 
@@ -54,7 +55,7 @@ export default function CheckoutView() {
           <span className="[font:400_11px/1_var(--font-mono)] tracking-[.14em] uppercase text-[#6B6761]">Order {orderNo}</span>
           <h1 className="m-0 font-medium [font-stretch:82%] text-[clamp(48px,7vw,96px)] leading-[.9] tracking-[-.03em] uppercase">Thank you.</h1>
           <p className="m-0 text-[17px] leading-[1.6] text-[#3A3835] max-w-[520px]">A confirmation is on its way to {email}. Our delivery team will call within two working days to arrange a time.</p>
-          <Link href="/" className="self-start mt-[16px] inline-flex items-center h-[54px] p-[0_30px] bg-[#1C1B19] text-[#F2EFEA] hover:text-[#F2EFEA] no-underline text-[12px] font-medium tracking-[.14em] uppercase">Back to Halden</Link>
+          <Link href="/" className="self-start mt-[16px] inline-flex items-center h-[54px] p-[0_30px] bg-[#1C1B19] text-[#F2EFEA] hover:text-[#F2EFEA] no-underline text-[12px] font-medium tracking-[.14em] uppercase">Back to Leave Your Legacy</Link>
         </section>
       ) : (
         <form onSubmit={submit} className="max-w-[1280px] mx-auto p-[clamp(40px,5vw,72px)_clamp(20px,3.4vw,48px)_120px] flex flex-wrap-reverse gap-[48px_clamp(40px,6vw,96px)] items-start">

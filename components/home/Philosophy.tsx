@@ -34,7 +34,7 @@ export default function Philosophy() {
             data-reveal=""
             className="m-[0_0_72px] font-serif text-[clamp(28px,2.6vw,40px)] leading-[1.2] text-[#1C1B19] [text-wrap:pretty] [transition:opacity_1.2s_ease,transform_1.4s_cubic-bezier(.2,.7,.1,1)]"
             style={{ opacity: 'var(--in,0)', transform: 'translateY(calc((1 - var(--in,0)) * 24px))' }}
-          >We started Halden because the best equipment we trained on was the worst thing in the room. Everything we make now has to earn its place twice.</p>
+          >We started Leave Your Legacy because the best equipment we trained on was the worst thing in the room. Everything we make now has to earn its place twice.</p>
           {principles.map(pr => (
             <div key={pr.num} data-reveal="" className="grid grid-cols-[56px_1fr] gap-[8px_16px] py-[32px] [border-top:1px_solid_rgba(28,27,25,.14)]">
               <span className="[font:400_11px/1.9_var(--font-mono)] text-[#6B6761] [transition:opacity_1s_ease]" style={{ opacity: 'var(--in,0)' }}>{pr.num}</span>

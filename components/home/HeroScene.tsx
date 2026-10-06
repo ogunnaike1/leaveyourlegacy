@@ -8,6 +8,7 @@ import { Suspense, useEffect, useLayoutEffect, useMemo, useRef, useState, type M
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import ImageSlot from '@/components/ui/ImageSlot';
+import LogoMark3D from '@/components/brand/LogoMark3D';
 
 const clamp = (v: number, a: number, b: number) => Math.min(b, Math.max(a, v));
 const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
@@ -156,6 +157,10 @@ function Room({ M }: { M: Mats }) {
           );
         })}
       </group>
+      {/* Brand mark in brushed aluminium, stood off the plaster inside the warm wall wash */}
+      <group position={[0.8, 0.95, -3.4 + 0.0145]}>
+        <LogoMark3D width={0.5} depth={0.025} material={M.alu} />
+      </group>
       <group position={[3.1, 0, -2.6]}>
         <Cyl r={0.11} l={1.2} m={M.plaster} seg={40} p={[0, 0.6, 0]} />
         <pointLight color="#ffc78f" intensity={1.6} distance={3} decay={2} position={[0, 1.25, 0.05]} />
@@ -212,7 +217,7 @@ function GlbBench({ url }: { url: string }) {
 }
 
 /** Environment for reflections: a dim room with one bright window panel. */
-function RoomEnvironment() {
+export function RoomEnvironment() {
   const { gl, scene } = useThree();
   useEffect(() => {
     const pm = new THREE.PMREMGenerator(gl), env = new THREE.Scene();

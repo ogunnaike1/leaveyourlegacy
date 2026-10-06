@@ -1,6 +1,7 @@
 'use client';
 import Link from 'next/link';
 import { useState } from 'react';
+import { WordmarkFit } from '@/components/brand/Logo';
 
 const colHead = '[font:400_11px/1_var(--font-mono)] tracking-[.12em] uppercase text-[#8A857D]';
 const colLink = 'text-[#E4DFD8] no-underline';
@@ -36,6 +37,7 @@ export default function Footer() {
           <Link href="/shop" className={colLink}>Shop</Link>
           <Link href="/collections" className={colLink}>Collections</Link>
           <Link href="/#philosophy" className={colLink}>About</Link>
+          <Link href="/brand" className={colLink}>Identity</Link>
         </div>
         <div className="flex flex-col gap-[14px]">
           <span className={colHead}>Service</span>
@@ -52,9 +54,9 @@ export default function Footer() {
           <span className="text-[#E4DFD8] leading-[1.6]">Kalkbreite 4<br />8003 Zürich<br />By appointment</span>
         </div>
       </div>
-      <div className="font-semibold [font-stretch:125%] text-[clamp(64px,17.5vw,300px)] leading-[.8] tracking-[.06em] text-[#2A2826] select-none overflow-hidden whitespace-nowrap">HALDEN</div>
+      <WordmarkFit className="text-[#2A2826] select-none" />
       <div className="flex flex-wrap justify-between gap-[16px] pt-[28px] [font:400_11px/1_var(--font-mono)] tracking-[.08em] uppercase text-[#8A857D]">
-        <span>© 2026 Halden Studio AG</span>
+        <span>© 2026 Leave Your Legacy</span>
         <div className="flex gap-[24px]"><Link href="/" className="text-inherit no-underline">Privacy</Link><Link href="/" className="text-inherit no-underline">Terms</Link></div>
       </div>
     </footer>

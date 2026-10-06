@@ -18,8 +18,10 @@ const fontVars = {
 } as React.CSSProperties;
 
 export const metadata: Metadata = {
-  title: 'HALDEN — Performance without compromise',
-  description: 'Strength equipment made with the precision of furniture and the tolerance of a commercial gym.'
+  title: 'Leave Your Legacy — Performance without compromise',
+  description: 'Strength equipment made with the precision of furniture and the tolerance of a commercial gym.',
+  applicationName: 'Leave Your Legacy',
+  openGraph: { siteName: 'Leave Your Legacy', title: 'Leave Your Legacy — Performance without compromise', images: ['/brand/og.png'] }
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

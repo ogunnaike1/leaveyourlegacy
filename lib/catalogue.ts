@@ -1,4 +1,4 @@
-// HALDEN — catalogue. Ported verbatim from design-reference/store.js, except prices, which are set to the
+// Leave Your Legacy — catalogue. Ported verbatim from design-reference/store.js, except prices, which are set to the
 // current online price of a comparable real product (see `ref` on each item; checked on the given date).
 
 export type Color = { name: string; hex: string };

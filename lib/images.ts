@@ -3,7 +3,7 @@
 // p-{id}-space, story-1..4, col-*, collection-*, home-edit-hero, statement, philosophy-detail, hero-poster.
 //
 // Every image below is stand-in stock photography from Unsplash (Unsplash License: free for commercial use,
-// attribution not required), chosen to match each slot's caption, until HALDEN's own photography exists.
+// attribution not required), chosen to match each slot's caption, until Leave Your Legacy's own photography exists.
 export const IMAGES: Record<string, string> = {
   'p-form-bench-1': '/images/p-form-bench-1.jpg',
   'p-form-bench-2': '/images/p-form-bench-2.jpg',

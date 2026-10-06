@@ -3,7 +3,7 @@ import Footer from '@/components/layout/Footer';
 import type { Sort } from '@/components/shop/SortSelect';
 import ShopView from './ShopView';
 
-export const metadata: Metadata = { title: 'Shop — HALDEN' };
+export const metadata: Metadata = { title: 'Shop — Leave Your Legacy' };
 
 type SP = Record<string, string | string[] | undefined>;
 const one = (v: string | string[] | undefined) => (Array.isArray(v) ? v[0] : v) || '';

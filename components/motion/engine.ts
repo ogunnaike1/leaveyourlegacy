@@ -1,4 +1,4 @@
-// HALDEN — shared motion layer, ported from design-reference/motion.js.
+// Leave Your Legacy — shared motion layer, ported from design-reference/motion.js.
 // Pinned progress, parallax, reveals, magnetic buttons, contextual cursor.
 // Everything writes CSS custom properties; components read them with var(). Normal scrolling is never hijacked.
 

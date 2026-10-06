@@ -6,6 +6,7 @@ import { useCart, useUI, cartCount } from '@/lib/cart-store';
 import { useVw } from '@/lib/use-vw';
 import { hover } from '@/components/motion/hover';
 import { NAV } from './nav';
+import { Logo, LogoMark } from '@/components/brand/Logo';
 import MobileMenu from './MobileMenu';
 import SearchSheet from './SearchSheet';
 import CartDrawer from './CartDrawer';
@@ -87,7 +88,9 @@ export default function Header({ dark: darkProp = false, current = '' }: Props) 
               Menu
             </button>
           ) : (
-            <Link href="/" className="text-inherit no-underline font-semibold [font-stretch:118%] text-[17px] tracking-[.34em]">HALDEN</Link>
+            <Link href="/" aria-label="Leave Your Legacy — home" className="text-inherit no-underline flex items-center">
+              <Logo size={12} showWordmark={vw >= 1280} />
+            </Link>
           )}
         </div>
         {!isMobile && (
@@ -101,7 +104,9 @@ export default function Header({ dark: darkProp = false, current = '' }: Props) 
           </nav>
         )}
         {isMobile && (
-          <Link href="/" className="text-inherit no-underline font-semibold [font-stretch:118%] text-[15px] tracking-[.3em] pl-[.3em]">HALDEN</Link>
+          <Link href="/" aria-label="Leave Your Legacy — home" className="text-inherit no-underline flex items-center">
+            <LogoMark size={28} title="" />
+          </Link>
         )}
         <div className="flex justify-end items-center gap-[6px]">
           <button onClick={() => set({ search: true })} aria-label="Search" className="appearance-none [background:none] border-0 text-inherit w-[44px] h-[44px] flex items-center justify-center cursor-pointer">

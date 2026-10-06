@@ -11,7 +11,7 @@ const find = (id: string) => byId(id) || products[0];
 
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
   const p = find((await params).id);
-  return { title: p.name + ' — HALDEN', description: p.desc };
+  return { title: p.name + ' — Leave Your Legacy', description: p.desc };
 }
 
 export default async function ProductPage({ params }: { params: Promise<{ id: string }> }) {

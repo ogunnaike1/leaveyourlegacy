@@ -26,7 +26,7 @@ export default function CollectionsEditorial() {
               <LineReveal dur={1.3} delay={0.1}>One standard.</LineReveal>
             </h2>
           </div>
-          <p className="m-0 max-w-[340px] text-[15px] leading-[1.6] text-[#4A4743] [text-wrap:pretty] [transition:opacity_1.2s_ease_.4s]" style={{ opacity: 'var(--in,0)' }}>Every Halden piece is designed for the room first and the workout second — then tested as if it were the other way round.</p>
+          <p className="m-0 max-w-[340px] text-[15px] leading-[1.6] text-[#4A4743] [text-wrap:pretty] [transition:opacity_1.2s_ease_.4s]" style={{ opacity: 'var(--in,0)' }}>Every piece we make is designed for the room first and the workout second — then tested as if it were the other way round.</p>
         </div>
 
         <div className="flex flex-wrap justify-between gap-[48px_24px]">

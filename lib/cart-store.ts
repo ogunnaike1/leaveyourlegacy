@@ -1,5 +1,5 @@
 'use client';
-// HALDEN — cart. Same API, line shape and localStorage key/format as design-reference/store.js.
+// Leave Your Legacy — cart. Same API, line shape and localStorage format as design-reference/store.js.
 import { create } from 'zustand';
 import { persist, type PersistStorage } from 'zustand/middleware';
 import { byId, type Product } from './catalogue';
@@ -7,7 +7,9 @@ import { byId, type Product } from './catalogue';
 export type CartLine = { key: string; id: string; color: string; qty: number };
 export type CartLineWithProduct = CartLine & { product: Product };
 
-export const CART_KEY = 'halden.cart.v1';
+export const CART_KEY = 'leaveyourlegacy.cart.v1';
+/** Pre-rebrand key; read once so bags saved before the rename survive. */
+const LEGACY_CART_KEY = 'halden.cart.v1';
 
 type CartState = {
   lines: CartLine[];
@@ -22,7 +24,7 @@ type CartState = {
 const storage: PersistStorage<Pick<CartState, 'lines'>> = {
   getItem: name => {
     try {
-      const raw = localStorage.getItem(name);
+      const raw = localStorage.getItem(name) ?? localStorage.getItem(LEGACY_CART_KEY);
       const lines = raw ? JSON.parse(raw) : [];
       return { state: { lines: Array.isArray(lines) ? lines : [] }, version: 0 };
     } catch {
@@ -30,7 +32,7 @@ const storage: PersistStorage<Pick<CartState, 'lines'>> = {
     }
   },
   setItem: (name, value) => {
-    try { localStorage.setItem(name, JSON.stringify(value.state.lines)); } catch {}
+    try { localStorage.setItem(name, JSON.stringify(value.state.lines)); localStorage.removeItem(LEGACY_CART_KEY); } catch {}
   },
   removeItem: name => {
     try { localStorage.removeItem(name); } catch {}
