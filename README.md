@@ -62,6 +62,12 @@ The logo comes from the supplied artwork in `public/brand/logo-original.png`.
 - **Colour:** brass (#A8865A) is the original gold, toned to sit with the site's charcoal and stone. Use charcoal or stone for one-colour versions.
 - **3D:** a brass mark hangs on the back wall of the hero room, and `/brand` has a turntable version. That page also documents the system and links the files in `public/brand/`.
 
+## Images and performance
+
+- **Adding or replacing photos:** after changing anything in `public/images/`, run `npm run images`. It resizes product shots to a 1600px maximum and other photos to 2400px, re-encodes them as progressive JPEG (quality 76), and regenerates the blur placeholders in `lib/image-blur.json`. Then register the photo's slot id in `lib/images.ts`.
+- **What visitors download:** Next.js serves each photo as AVIF or WebP at the width the layout needs. These copies are cached for 31 days. Source photos and brand files are cached for a week.
+- **Homepage 3D:** the hero scene (three.js) only starts loading once the page is idle, so text, fonts and navigation load first.
+
 ## Testing
 
 `tests/e2e.mjs` drives the real site in Chrome and checks every user-facing function (35 checks):

@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "tsc --noEmit",
-    "test:e2e": "node tests/e2e.mjs"
+    "test:e2e": "node tests/e2e.mjs",
+    "images": "node scripts/optimize-images.mjs"
   },
   "dependencies": {
     "@react-three/fiber": "^9.8.1",

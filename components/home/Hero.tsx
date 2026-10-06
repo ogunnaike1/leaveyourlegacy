@@ -20,6 +20,13 @@ const specNum = '[font:400_11px/1.9_var(--font-mono)] text-[#9C978F]';
 export default function Hero() {
   const pin = useRef<HTMLElement>(null);
   const [stage, setStage] = useState(0);
+  // Load the 3D scene (three.js, ~235 KB) once the page is idle, so text, fonts and navigation come first.
+  const [scene, setScene] = useState(false);
+  useEffect(() => {
+    const w = window as Window & { requestIdleCallback?: (cb: () => void, o?: { timeout: number }) => number };
+    if (w.requestIdleCallback) w.requestIdleCallback(() => setScene(true), { timeout: 1500 });
+    else { const t = setTimeout(() => setScene(true), 300); return () => clearTimeout(t); }
+  }, []);
   const vw = useVw(), vh = useVh();
 
   useEffect(() => {
@@ -38,7 +45,7 @@ export default function Hero() {
   return (
     <section ref={pin} data-pin="--hp" data-theme="dark" data-screen-label="01 Hero" className="relative h-[300vh] bg-[#141311] text-[#F2EFEA]">
       <div className="sticky top-0 h-[100vh] supports-[height:100svh]:h-[100svh] overflow-hidden">
-        <HeroScene />
+        {scene && <HeroScene />}
         <div className="absolute inset-0 pointer-events-none [background:linear-gradient(90deg,rgba(20,19,17,.62)_0%,rgba(20,19,17,.18)_42%,rgba(20,19,17,0)_60%),linear-gradient(0deg,rgba(20,19,17,.6)_0%,rgba(20,19,17,0)_34%),linear-gradient(180deg,rgba(20,19,17,.45)_0%,rgba(20,19,17,0)_18%)]" />
         <div className="absolute inset-0 pointer-events-none opacity-[.09] mix-blend-overlay" style={{ backgroundImage: NOISE }} />
 

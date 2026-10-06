@@ -4,9 +4,10 @@ import MotionRoot from '@/components/motion/MotionRoot';
 import './globals.css';
 
 const archivo = Archivo({ subsets: ['latin'], axes: ['wdth'], variable: '--font-archivo', display: 'swap' });
-const instrument = Instrument_Serif({ subsets: ['latin'], weight: '400', style: ['normal', 'italic'], variable: '--font-instrument', display: 'swap' });
+// Instrument Serif only appears below the fold (editorial accents), so it is not preloaded.
+const instrument = Instrument_Serif({ subsets: ['latin'], weight: '400', style: ['normal', 'italic'], variable: '--font-instrument', display: 'swap', preload: false });
 // Jost sets the brand wordmark (matches the supplied logo's lowercase geometric sans).
-const jost = Jost({ subsets: ['latin'], weight: ['400', '500'], variable: '--font-jost', display: 'swap' });
+const jost = Jost({ subsets: ['latin'], weight: '400', variable: '--font-jost', display: 'swap' });
 const jetbrains = JetBrains_Mono({ subsets: ['latin'], weight: ['400', '500'], variable: '--font-jetbrains', display: 'swap' });
 
 // Glyphs outside the latin subset (→ ← ✓ ★) must fall back to the generic sans/serif/monospace faces, as they
