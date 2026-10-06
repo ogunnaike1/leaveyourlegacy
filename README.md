@@ -61,3 +61,29 @@ The logo comes from the supplied artwork in `public/brand/logo-original.png`.
 - **Wordmark:** "leaveyourlegacy" in Jost, with "your" in brass.
 - **Colour:** brass (#A8865A) is the original gold, toned to sit with the site's charcoal and stone. Use charcoal or stone for one-colour versions.
 - **3D:** a brass mark hangs on the back wall of the hero room, and `/brand` has a turntable version. That page also documents the system and links the files in `public/brand/`.
+
+## Testing
+
+`tests/e2e.mjs` drives the real site in Chrome and checks every user-facing function (35 checks):
+- **Pages and links:** every page and internal link loads, and the navbar works.
+- **Search:** live results, Enter opening the results page, and the single-match jump to a product.
+- **Shop:** filters, sort and URL state.
+- **Bag:** add to bag from every place it appears, plus the cart drawer.
+- **Product page:** gallery, zoom and 360°.
+- **Checkout:** discount code, card validation and order placement, then the order showing on the account page.
+- **Forms:** newsletter and contact.
+- **Mobile:** menu, filters and search on a phone.
+
+```bash
+npm run build && npm start      # in one terminal
+npm run test:e2e                # in another (BASE_URL=… to test a deployed site)
+```
+
+## Before going live
+
+- **Payments:** checkout validates cards but does not charge them. Connect a payment provider (e.g. Stripe) in `app/checkout/CheckoutView.tsx`.
+- **Newsletter and contact forms:** they validate and accept submissions (`app/api/newsletter`, `app/api/contact`), but nothing is sent until you connect an email service where the `TODO`s are.
+- **Orders and accounts:** orders are kept in the visitor's browser (`lib/orders.ts`). A real store needs a database and sign-in.
+- **Discount codes:** codes live in `lib/promo.ts`. `WELCOME10` is an example.
+- **Instagram:** the link is set in `lib/site.ts`.
+- **Legal pages:** have the Privacy and Terms copy reviewed.

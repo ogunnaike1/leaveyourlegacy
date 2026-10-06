@@ -7,7 +7,7 @@ export const metadata: Metadata = { title: 'Shop — Leave Your Legacy' };
 
 type SP = Record<string, string | string[] | undefined>;
 const one = (v: string | string[] | undefined) => (Array.isArray(v) ? v[0] : v) || '';
-const list = (v: string | string[] | undefined) => one(v).split(',').filter(Boolean);
+const list = (v: string | string[] | undefined) => (Array.isArray(v) ? v : v ? [v] : []).filter(Boolean);
 const SORTS: Sort[] = ['featured', 'price-asc', 'price-desc', 'name'];
 
 export default async function ShopPage({ searchParams }: { searchParams: Promise<SP> }) {

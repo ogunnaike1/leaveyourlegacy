@@ -57,7 +57,7 @@ export default function ShopView({ init }: { init: ShopInit }) {
   const written = useRef<string | null>(null);
   useEffect(() => {
     if (written.current === null || spStr === written.current) return;
-    const q = new URLSearchParams(spStr), list = (g: string) => (q.get(g) || '').split(',').filter(Boolean);
+    const q = new URLSearchParams(spStr), list = (g: string) => q.getAll(g).filter(Boolean);
     const so = q.get('sort') as Sort;
     setCat(q.get('c') || 'All'); setLine(q.get('line') || ''); setQ(q.get('q') || '');
     setSort(['featured', 'price-asc', 'price-desc', 'name'].includes(so) ? so : 'featured');
@@ -69,7 +69,8 @@ export default function ShopView({ init }: { init: ShopInit }) {
     if (line) q.set('line', line);
     if (search) q.set('q', search);
     if (sort !== 'featured') q.set('sort', sort);
-    (Object.keys(sel) as Group[]).forEach(g => { if (sel[g].length) q.set(g, sel[g].join(',')); });
+    // One parameter per value: labels such as "$1,000 – $5,000" contain commas, so joining would corrupt them.
+    (Object.keys(sel) as Group[]).forEach(g => sel[g].forEach(v => q.append(g, v)));
     const s = q.toString();
     written.current = s;
     window.history.replaceState(window.history.state, '', location.pathname + (s ? '?' + s : ''));
@@ -78,7 +79,7 @@ export default function ShopView({ init }: { init: ShopInit }) {
   const v = useMemo(() => {
     const base = searchProducts(search, line ? products.filter(p => p.line === line) : products);
     const test = (p: Product, skip?: Group) => (cat === 'All' || p.category === cat)
-      && (skip === 'price' || !sel.price.length || sel.price.some(key => { const r = ranges.find(x => x.k === key)!; return p.price >= r.a && p.price < r.b; }))
+      && (skip === 'price' || !sel.price.length || sel.price.some(key => { const r = ranges.find(x => x.k === key); return !!r && p.price >= r.a && p.price < r.b; }))
       && (skip === 'equipment' || !sel.equipment.length || sel.equipment.includes(p.equipment))
       && (skip === 'color' || !sel.color.length || p.colors.some(c => sel.color.includes(c.name)))
       && (skip === 'avail' || !sel.avail.length || sel.avail.includes(availOf(p)));
