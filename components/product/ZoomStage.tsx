@@ -6,8 +6,9 @@ export type View = { short: string; slot: string; cap: string };
 export default function ZoomStage({ views, active, zoom, origin }: { views: View[]; active: number; zoom: boolean; origin: string }) {
   return (
     <>
-      {views.map((v, i) => {
-        const on = active === i && i < 4;
+      {/* The 360° view (index 4) has no photo layer — Spin360 draws over the stage instead. */}
+      {views.slice(0, 4).map((v, i) => {
+        const on = active === i;
         return (
           <div key={v.slot} className="absolute inset-0 [transition:opacity_.8s_ease] text-[#8C877F]" style={{ opacity: on ? 1 : 0, pointerEvents: on ? 'auto' : 'none' }}>
             <div className="absolute inset-0 [transition:transform_.6s_cubic-bezier(.2,.7,.2,1)]" style={{ transformOrigin: origin, transform: `scale(${zoom && on ? 2 : 1})` }}>

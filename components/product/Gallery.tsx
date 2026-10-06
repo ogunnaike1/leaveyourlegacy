@@ -3,6 +3,7 @@ import { useEffect, useRef, useState, type MouseEvent, type PointerEvent } from 
 import type { Product } from '@/lib/catalogue';
 import ZoomStage from './ZoomStage';
 import Spin360 from './Spin360';
+import ImageSlot from '@/components/ui/ImageSlot';
 
 const angles: [string, string][] = [['Front ¾', 'studio, front three-quarter'], ['Profile', 'side profile, raking light'], ['Detail', 'material close-up'], ['In room', 'installed in a finished space'], ['360°', '']];
 
@@ -39,7 +40,11 @@ export default function Gallery({ p, mobile: m }: { p: Product; mobile: boolean 
             className="appearance-none p-0 border-0 bg-[#E8E4DD] w-[72px] h-[90px] flex-none relative cursor-pointer text-[#8C877F] outline-offset-[3px] [transition:outline-color_.3s]"
             style={{ outline: `1px solid ${view === i ? '#1C1B19' : 'transparent'}` }}
           >
-            <span className="absolute inset-0 flex items-end p-[8px] [font:400_9px/1.2_var(--font-mono)] tracking-[.06em] uppercase text-[#6B6761] text-left">{a[0]}</span>
+            {/* Thumbnail of the view (the 360° thumb shows the front ¾ shot), label kept legible on a light backing. */}
+            <ImageSlot id={'p-' + p.id + '-' + (i < 4 ? i + 1 : 1)} sizes="72px" />
+            <span className="absolute inset-0 flex items-end p-[6px] text-left">
+              <span className="[font:400_9px/1.2_var(--font-mono)] tracking-[.06em] uppercase text-[#4A4743] bg-[rgba(247,245,241,.85)] p-[3px_4px]">{a[0]}</span>
+            </span>
           </button>
         ))}
       </div>
