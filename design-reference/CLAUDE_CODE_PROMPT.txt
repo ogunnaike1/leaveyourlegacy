@@ -1,0 +1,121 @@
+SETUP (do this before pasting): copy the whole "design_handoff_halden_store" folder into the repo root as /design-reference.
+
+=== FIDELITY RULES — READ FIRST ===
+The files in /design-reference are the SOURCE OF TRUTH. The goal is a 1:1 port to Next.js — not a reinterpretation. Do not redesign, "improve", rename, re-word, re-space or re-time anything.
+
+1. Before building any page or component, read its reference file in full:
+   Home.dc.html → app/(store)/page.tsx + components/home/*
+   Shop.dc.html → app/(store)/shop/page.tsx + components/shop/*
+   Product.dc.html → app/(store)/products/[id]/page.tsx + components/product/*
+   Collections.dc.html → app/(store)/collections/page.tsx
+   Checkout.dc.html → app/checkout/page.tsx
+   SiteHeader.dc.html → Header, SearchSheet, MobileMenu, CartDrawer
+   SiteFooter.dc.html → Footer
+   ProductCard.dc.html → components/product/ProductCard.tsx
+   store.js → lib/catalogue.ts + lib/cart-store.ts (copy every product field and every string VERBATIM, same ids, same cart API and localStorage key)
+   motion.js → components/motion/* (same maths: pinned progress = -rect.top/(height-innerHeight), parallax = (centre - viewportCentre) * -factor, reveal threshold .12 / rootMargin -8%, magnetic ±3px/±2px, cursor 84px)
+   hero-scene.js → components/home/HeroScene.tsx in React Three Fiber, porting EVERY mesh dimension/position, material value, light (type, colour, intensity, position, shadow settings), procedural texture generator, fog, tone mapping, exposure curve, camera path, view-offset curve and damping exactly.
+   image-slot.js / support.js are prototype runtime only — do NOT port; replace each <image-slot> with a next/image wrapper (same id as filename key, same aspect ratio, same backdrop colour, same caption shown as placeholder until an image exists).
+2. Markup → JSX 1:1. Each .dc.html file has a template between <x-dc> and </x-dc> and a logic class in <script data-dc-script>. Keep the same element hierarchy and the same order of sections.
+3. Styles: every inline style value is final. Convert to Tailwind using arbitrary values where needed (e.g. text-[clamp(52px,8.6vw,150px)], tracking-[-.03em], [font-stretch:82%]) — never round to the nearest Tailwind default. Keep every clamp(), calc(), aspect-ratio, transition duration and cubic-bezier exactly. Styles that read CSS variables (--hp, --sp, --in, --py, --h, --mx, --my, --r) must be reproduced with identical formulas (drive the variables from GSAP/Framer/useScroll, or set the same CSS vars).
+4. "style-hover" attributes = hover state (Tailwind hover:). "data-reveal", "data-parallax", "data-pin", "data-cursor", "data-magnetic", "data-theme" = behaviours from motion.js — implement as components/hooks with the same semantics.
+5. Logic: port each renderVals()/state/handler to hooks with identical behaviour, thresholds and breakpoints (900px mobile nav/filters/story layout, 700px height & 640px width for the scroll cue, 760px collection tile wrap).
+6. Copy: use every string exactly as written in the reference files (headlines, eyebrows, buttons, captions, empty states, checkout notes, accordion text in Product.dc.html, collection copy in Collections.dc.html, principles in Home.dc.html). Do not add or remove copy, sections, badges or icons.
+7. Verify: after each page, open the reference .dc.html in a browser next to your page at 1440px, 1024px and 390px wide and fix every visible difference before moving on. Scroll through pinned sections and compare at the same scroll positions.
+
+The specification below summarises the same design for orientation. If anything below conflicts with the reference files, THE FILES WIN.
+
+=== SPECIFICATION ===
+Build a complete premium ecommerce site for HALDEN — a fictional Zürich-based brand selling professional/home gym equipment, fitness accessories and home/lifestyle objects. It must feel custom art-directed (luxury fitness × modern architecture × editorial fashion ecommerce), never template-like.
+
+STACK
+Next.js (App Router) + TypeScript + Tailwind CSS + Framer Motion + GSAP ScrollTrigger + React Three Fiber/drei (hero only, loaded via next/dynamic ssr:false) + lucide-react + next/image + next/font/google. shadcn/ui only for Sheet, Select, Accordion, Checkbox. Zustand (persist) for cart. Create a clean folder/component structure first, then implement section by section.
+
+STRUCTURE
+app/(store)/page.tsx (Home) · app/(store)/shop/page.tsx (searchParams ?c=Strength|Cardio|Accessories|Home, ?line=gym|home) · app/(store)/products/[id]/page.tsx · app/(store)/collections/page.tsx · app/checkout/page.tsx (minimal layout)
+components/layout/{Header,Footer,CartDrawer,SearchSheet,MobileMenu}
+components/home/{Hero,HeroScene,CollectionsEditorial,FeaturedGrid,ScrollStory,HomeEdit,Statement,Bestsellers,Philosophy}
+components/product/{ProductCard,Gallery,ZoomStage,Spin360,ProductInfo,DetailsAccordion}
+components/shop/{CategoryTabs,FilterPanel,FilterSheet,SortSelect,ActiveChips}
+components/motion/{LineReveal,ClipReveal,Parallax,Magnetic,ContextCursor}
+lib/{catalogue.ts,cart-store.ts,format.ts}
+
+DESIGN TOKENS (Tailwind theme)
+Colours: stone #F2EFEA (main light bg / light text) · paper #F7F5F1 (alt light bg) · sand #EFEBE5 (checkout summary) · beige #E5DCCF (Home Edit bg; ink #2A2520, muted #6B6258, body #4E463E) · charcoal #1C1B19 (text, primary buttons) · hero #141311 · story #1A1917 · night #121110 (footer, mobile menu) · body grey #4A4743 · muted #6B6761 · dark-muted #9C978F/#8A857D · on-dark body #D9D3CA/#C9C2B8 · image backdrops #E8E4DD #DAD4CA #E3DED6 #D6CBBB #24221F · rules rgba(28,27,25,.14) light / rgba(242,239,234,.12–.2) dark · stock dot #5E7A5A (in stock) #B08A4E (made to order/low).
+Finish swatches: Black Steel #1d1c1a, Stone #cfc7bb, Tan Leather #9a7556, Brushed Steel #a9adb0, Walnut #5e4232, Oat #e2d9cb, Charcoal #3a3936.
+Fonts: Archivo variable (axes wdth 62–125, wght 300–700) for UI + display; Instrument Serif (+italic) for editorial accents; JetBrains Mono 400 for eyebrows/labels/prices.
+Display style: Archivo 500, font-stretch 80–84%, UPPERCASE, letter-spacing −.03 to −.04em, line-height .82–.92. Sizes: hero H1 clamp(52px,8.6vw,150px); Shop/Collections H1 clamp(64px,12vw,220px); section H2 clamp(40px,5vw,84px)–clamp(48px,6.8vw,124px); statement clamp(60px,11.5vw,210px).
+Wordmark "HALDEN": Archivo 600, font-stretch 118% (footer 125%), letter-spacing .34em, 17px (15px mobile).
+Eyebrows: mono 11px, letter-spacing .14em, uppercase, muted. Body 15–16px/1.6. Buttons 12px/500/.14em uppercase, height 54–58px, padding 0 30px.
+Radius 0 everywhere (only swatches and badges are round). Almost no shadows (cart drawer: -30px 0 60px rgba(0,0,0,.08)).
+Gutter clamp(20px,3.4vw,48px); max width 1680px; section padding clamp(88px,10–12vw,150–180px). Product grids: repeat(auto-fill, minmax(min(calc(50% - 10px),300px),1fr)), gap 56px 20px (always 2 cols on mobile).
+Motion: reveal ease cubic-bezier(.2,.7,.1,1); drawers/clip ease cubic-bezier(.7,0,.2,1). Line reveal = each line in overflow-hidden mask (add ~.1em right padding so glyphs don't clip), inner translateY 108%→0, 1.3–1.6s, .1s stagger. Image reveal clip-path inset(100% 0 0 0)→inset(0) 1.6s. Hover image scale 1.03 over 1.4s; arrow nudge 6px. Parallax 0.06–0.18. Magnetic buttons max ±3px. Full prefers-reduced-motion support. No scroll hijacking — pinned sections are tall wrappers with position:sticky + scrubbed progress.
+Avoid: gradients, glow, glassmorphism (except header blur), rounded cards, badges, emoji, stock bodybuilding imagery.
+
+CATALOGUE (lib/catalogue.ts) — {id,name,type,category,equipment,line,price,colors,stock,featured,best,rating,reviews,desc,dims,materials}
+form-bench "Form Bench" Adjustable Bench · Strength · Benches · gym · $1,890 · Black/Tan/Stone · In stock · 4.9 (212) · "Seven back positions, three seat angles and a frame welded from 3mm steel. Upholstered in full-grain leather that softens with use." · L132×W62×H46cm, 38kg, rated 450kg
+olympic-bar "Bar 20" Olympic Barbell · Strength · Bars & Plates · $640 · Steel/Black
+monolith-dumbbells "Monolith Set" Urethane Dumbbell Set 2–24kg · Strength · Free Weights · $3,450 · Black/Stone
+axis-cable "Axis Station" Cable Training Station · Strength · Machines · $7,900 · Made to order
+line-treadmill "Line Treadmill" Performance Treadmill (slat belt) · Cardio · Machines · $9,400 · Made to order
+adjust-kettlebell "Kettle 32" Adjustable Kettlebell 8–32kg · Strength · Free Weights · $520
+still-rower "Still Rower" Water Rower, walnut · Cardio · Machines · $3,200
+ledge-rack "Ledge Rack" Designer Storage Rack, steel + walnut · Strength · Storage · $2,150
+recovery-set "Recovery Set" Recovery Roller Set · Accessories · Recovery · $180
+ground-mat "Ground Mat" Training Mat, rubber + leather edge · Accessories · Mats · home · $340
+arc-mirror "Arc Mirror" Sculptural Floor Mirror · Home · $1,280
+studio-towels "Studio Towels" Towel Set of Three · Home · $120
+vessel-bottle "Vessel" Insulated Bottle, walnut cap · Home · $68
+plinth-lamp "Plinth Lamp" Ambient Floor Lamp, cast plaster · Home · $690 · Low stock
+tray-organiser "Tray Organiser" Walnut Organiser · Home · $210
+Copy every desc/dims/materials string verbatim from /design-reference/store.js. Collections: Strength, Cardio, Home Gym (bench, dumbbells, rack, rower, mat, mirror), Accessories, Home.
+Cart: lines {key:id|color, id, color, qty}, persisted (localStorage "halden.cart.v1"), add(id,color,qty,openDrawer), setQty, remove, clear, count, subtotal. Count updates immediately in header.
+
+HEADER (fixed, 76px / 64px mobile)
+Grid 1fr auto 1fr: wordmark | nav Shop, Gym (/shop?line=gym), Home (/shop?line=home), Collections — 13px/500, 40px gap, 1px underline scaleX on hover/active | Search, Account, Bag + mono count (Lucide Search/User/ShoppingBag, 19px, stroke 1.4).
+Theme switches by the section underneath (data-theme="dark|light"): transparent over hero top, otherwise rgba(21,20,19,.72) or rgba(242,239,234,.86) with saturate(1.2) blur(14px). Hides on scroll down after 600px, reappears on scroll up. Count bumps scale 1.45 with cubic-bezier(.3,1.6,.5,1).
+Search: top sheet (translateY −102%→0, .7s) with huge input, live results (name, type, price) over name/type/category/materials; defaults to bestsellers.
+Mobile (<900px): "Menu" button → fullscreen #121110 menu revealed by clip-path inset(0 0 100% 0)→inset(0) .8s; items clamp(44px,13vw,72px) uppercase slide up with 70ms stagger, numbered 01–04; small links at bottom.
+Cart drawer: right, min(460px,100vw), translateX 102%→0 .75s, scrim .6s. Lines: 96×120 thumb, name, line price, "type · finish", qty stepper, Remove. Footer: Subtotal, "White-glove delivery included on equipment. Taxes calculated at checkout.", Checkout button. Empty: serif "Your bag is empty." Esc closes all; lock body scroll.
+
+HOME
+1 HERO — pinned 300vh, sticky 100svh, bg #141311, dark header. Full-bleed R3F scene + scrims (left 62%→0, bottom 60%→0, top 45%→0) + 9% noise grain overlay. Text states by scroll progress p:
+ • p 0–.22: eyebrow "Form Bench — Edition 01"; H1 "PERFORMANCE / WITHOUT COMPROMISE." (line reveal on load); "Strength equipment made with the precision of furniture and the tolerance of a commercial gym."; buttons "Shop Equipment" (stone fill, magnetic) and "Explore Collection →" (text + underline that retracts on hover). Fades 1−p·4.5, rises 140px.
+ • p .26–.7: right column "BUILT LIKE FURNITURE. / RATED TO 450 KG." + numbered rows: 01 Seven back positions, from flat to 85° · 02 3mm steel frame, welded and ground flush by hand · 03 Full-grain leather that darkens where you use it.
+ • p > .76: mono "From $1,890 · Ships in 2 weeks", italic serif "The Form Bench" clamp(56px,8vw,128px), outlined "View the bench →".
+ • Scroll cue (mono SCROLL + 48px line with looping fill) hidden when viewport height < 700 or width < 640. 1px progress line at bottom. Only the visible text state receives pointer events.
+ 3D SCENE: architectural room — polished concrete floor (noise albedo + roughness ~.82), textured plaster walls (bump), steel-framed window on the left with an emissive glow plane, dark ceiling, shadow-gap skirting, fog #141311 9–18. Custom environment (dim room + bright window lightformer). Lights: hemisphere .18; directional sun through window #ffdcb4→#f4efe8, 2.7→2.0, soft shadows (2048 desktop/1024 mobile); warm spot wash on back wall; soft key front-right; warm point light in a plaster column lamp. Props: low walnut/steel rack with four urethane dumbbells. Bench placeholder from primitives: powder-coated steel (metalness .15, roughness .48), brushed aluminium pins/handle, rubber feet/wheels, leather pads (MeshPhysical, sheen .5, bump grain), ContactShadows. ACES Filmic, exposure .92→1.02. Camera fov 30 (42 mobile); azimuth .92→.26 rad, radius 3.7→3.05 (mobile 4.6→3.9), height 1.35→.95; horizontal view offset moves product right (−17%) → left (+13%) → right (−16%) to make room for each text state. Bench rotates −.12→.1 rad, backrest inclines .38→.62 rad. Damped (lerp .075), render on demand, pause off-screen, DPR ≤1.75 (≤1.25 mobile). Accept a GLB (useGLTF('/models/form-bench.glb')) that replaces the primitives. Static poster fallback for no-WebGL / low-power.
+2 COLLECTIONS (stone) — "FOUR DISCIPLINES. / ONE STANDARD." + "Every Halden piece is designed for the room first and the workout second — then tested as if it were the other way round." Asymmetric editorial tiles (full width < 760px): Strength 56% (1/1.08), Cardio 36% offset 200px down (3/4), Home Gym 42% (4/3), Accessories 50% offset 140px (16/11). Clip reveal, parallax image, caption [num | NAME + line | count →]; hover scales image, shifts text 6px, slides arrow. Custom cursor "Explore".
+3 FEATURED (paper) — "ENGINEERED FOR MORE." + "Shop all equipment"; 8 ProductCards (bench, bar, dumbbells, cable, treadmill, kettlebell, recovery, rack), staggered fade-up.
+4 SCROLL STORY — pinned 440vh, #1A1917. Desktop grid 38/62 text|image; mobile image 58% top, text 42%. "DESIGNED AROUND / THE WAY YOU MOVE." Four frames switching at p≈.25/.5/.75: 01 THE WHOLE OBJECT "Every line on the Form Bench is structural. Nothing is there to look fast." · 02 MATERIAL "Full-grain leather from a family tannery in Tuscany, saddle-stitched with waxed linen thread." · 03 MECHANISM "A machined ladder and spring pop-pin. Adjusts in one movement and locks without play." · 04 IN PLACE "Sized and finished to live in the room — not hidden in the garage." Frames 2–3 reveal bottom-up clip-path with scale 1.18→1.02; frame 4 reveals from the right. 4-segment progress bar.
+5 HOME EDIT (beige #E5DCCF) — 4/5 interior image (inset clip reveal) + serif "For the rooms / around the room." (2nd line italic) + "Mirrors, light, linen and storage made in the same workshops as our equipment, to the same tolerances. Pieces for the hour after training — and every other hour." + "Shop the Home Edit". Below: horizontal scroll-snap rail (columns clamp(250px,24vw,380px)), square prev/next buttons, "Drag" cursor; cards with varied ratios, serif 28px names, mono price, text "Add to bag" → "Added ✓" (no drawer).
+6 STATEMENT — 120vh dark, full-bleed parallax image (.18), bottom scrim, "YOUR SPACE. / YOUR STANDARD." + mono "Private residence / Lake Zürich, 2026".
+7 BESTSELLERS (paper) — "MOST LIVED WITH." + "The pieces our clients reorder for second homes, studios and the friends who visited and noticed." 6 square cards labelled No. 01–06 with persistent outlined "Add to bag" (→ charcoal "Added to bag ✓" 1.8s, header count bumps).
+8 PHILOSOPHY (stone, #philosophy) — left sticky: "BUILT TO / LIVE WITH YOU." + 5/4 detail image (left-to-right clip reveal). Right: serif lede "We started Halden because the best equipment we trained on was the worst thing in the room. Everything we make now has to earn its place twice." + 4 principles with line reveals: Materials that age well · Engineering you feel, not see · Proportion before performance · For training, and for living (exact copy in Home.dc.html → principles array).
+9 FOOTER (#121110) — "THE GOOD STUFF." + "Occasional product drops, training spaces and design inspiration. Four or five letters a year." underlined email + "Subscribe →" → inline thanks. Columns: Store (Shop, Collections, About) · Service (Shipping, Returns, Contact) · Follow (Instagram) · Showroom (Kalkbreite 4, 8003 Zürich, By appointment). Oversized wordmark #2A2826. "© 2026 Halden Studio AG" · Privacy · Terms.
+
+PRODUCT CARD
+Props pid, ratio (4/5 default), number, alwaysAdd. Image bg #E8E4DD; hover: image scale 1.03, alternate angle crossfades in, "Quick add" bar (50px, #F7F5F1, label + price) rises 12px. Touch / alwaysAdd: persistent outlined button. Below: name 15/500 + mono price; type 13 muted + 10px finish dots. Quick add opens drawer.
+
+SHOP
+Huge title (SHOP / GYM / HOME / category) + intro. Category tabs with superscript counts and sliding 1px underline. Toolbar: Filter toggle (shows active count) · mono product count · Sort (Featured, Price low–high, high–low, Name). Active chips with × + Clear all. Filters: Price (Under $250, $250–$1,000, $1,000–$5,000, $5,000+), Equipment type, Colour & finish (swatch checkboxes), Availability (In stock / Made to order); faceted counts. Desktop: 240px sticky sidebar, hide/show by sliding; hidden scrollbar. Mobile: bottom sheet 86vh with "Clear" / "Show N products". Framer layout + AnimatePresence on the grid (fade-up, 45ms stagger). Empty: serif "Nothing fits all of that." Sync state to URL.
+
+PRODUCT PAGE
+Desktop: gallery left (72×90 thumbs column + 4/5 stage, max-height 100vh−140px), info right sticky top 110px, max 520px. Mobile: thumbs row under stage. Views: Front ¾, Profile, Detail, In room, 360°; .8s crossfade. Click toggles 2× zoom with transform-origin following cursor; cursor label Zoom/Close/Drag. Spin360 component: pointer drag 0.6°/px over a 36-frame image sequence (product.spin: string[]), placeholder dial until renders exist. Info: breadcrumb, name, type, ★ rating + reviews, price, desc, Finish swatches (40px ring), qty stepper, Add to bag (charcoal, shows line total, "Added to bag ✓", opens drawer), Buy now (outlined → checkout), stock line, "White-glove delivery and installation included. 30-day trial in your home." Accordion: Description, Dimensions, Materials, Delivery, Warranty — exact text from Product.dc.html. "DESIGNED FOR / YOUR SPACE." full-bleed parallax interior + "Our studio plans rooms free of charge — layout, flooring, light and clearances — before anything ships." "Pairs well with" 4 cards.
+
+COLLECTIONS
+Title + anchor index. Five alternating rows (image/text flip) on stone, #1A1917 (dark), paper, stone, beige: clip-reveal parallax image, "0N — X pieces", big name, copy (verbatim from Collections.dc.html), top-4 product list with prices, "Shop {name}".
+
+CHECKOUT (keep it usable, not overdesigned)
+Minimal header (wordmark, "← Continue shopping"). Two columns; summary first on mobile. 01 Contact (email, phone, opt-in) · 02 Delivery (first, last, address, apt/access notes, city, postcode, country) · 03 Shipping radio cards (White-glove delivery & installation — Included; Kerbside — Included; Scheduled evening slot — $95) · 04 Payment segmented (Card / Bank transfer / Pay in 3). Inputs 54px, 1px rgba(28,27,25,.22) border, white fill, charcoal focus. Summary panel #EFEBE5: thumbs with qty badge, code + Apply, Subtotal, Shipping, VAT 8.1% included, Total. "Place order" shows total, disabled when empty. Success: "Order HLD-xxxxxx", "THANK YOU.", clears cart.
+
+MICRO-INTERACTIONS
+Custom cursor only on [data-cursor] areas (84px stone disc, mono label, scale 0→1 .35s, fine pointers only). Magnetic primary buttons. Animated nav underlines. Never animate everything.
+
+IMAGERY
+Use next/image with placeholder blocks (backdrop colours above + mono caption describing the shot) until real photography arrives. Shot list: per product front ¾ / profile / detail / in room / wide interior; story 1–4; collection tiles; home-edit hero; statement; philosophy detail. Art direction: architectural interiors, natural window light, neutral grade, subtle grain.
+
+PERFORMANCE
+Lazy-load everything below the fold, dynamic-import the Three scene, minimal CLS (fixed aspect ratios), reduce 3D on mobile, 60fps transforms/opacity only, Lighthouse ≥90.
+
+Before finishing, review every section and remove anything that feels generic, template-like, over-animated or cluttered.

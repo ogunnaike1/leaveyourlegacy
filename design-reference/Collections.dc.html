@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<title>Collections — HALDEN</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,300..700&amp;family=Instrument+Serif:ital@0;1&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap">
+<style>
+html,body{margin:0;background:#F2EFEA;-webkit-font-smoothing:antialiased}
+a{color:#1C1B19}a:hover{color:#000}
+::selection{background:#1C1B19;color:#F2EFEA}
+</style>
+<script src="./store.js"></script>
+<script src="./motion.js"></script>
+<script src="./image-slot.js"></script>
+</helmet>
+<div data-theme="light" style="font-family:'Archivo',sans-serif;color:#1C1B19;background:#F2EFEA">
+<dc-import name="SiteHeader" current="collections" hint-size="100%,0px"></dc-import>
+
+<section data-screen-label="Collections header" style="max-width:1680px;margin:0 auto;padding:clamp(120px,14vw,200px) clamp(20px,3.4vw,48px) clamp(64px,8vw,120px)">
+  <div data-reveal="" style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-end;gap:24px 48px">
+    <h1 style="margin:0;font-weight:500;font-stretch:80%;font-size:clamp(64px,11.5vw,200px);line-height:.82;letter-spacing:-.04em;text-transform:uppercase"><span style="display:block;overflow:hidden;padding:0 .1em .03em 0;margin-right:-.1em"><span style="display:block;transform:translateY(calc((1 - var(--in,0)) * 108%));transition:transform 1.4s cubic-bezier(.2,.7,.1,1)">Collections</span></span></h1>
+    <p style="margin:0 0 12px;max-width:360px;font-size:15px;line-height:1.6;color:#4A4743;text-wrap:pretty;opacity:var(--in,0);transition:opacity 1.2s ease .4s">Five ways into the catalogue. Each one is edited, not exhaustive — we would rather make fewer things properly.</p>
+  </div>
+  <nav style="display:flex;flex-wrap:wrap;gap:12px 32px;margin-top:56px;padding-top:20px;border-top:1px solid rgba(28,27,25,.14)">
+    <sc-for list="{{ cols }}" as="c" hint-placeholder-count="5">
+      <a href="{{ c.anchor }}" style="display:flex;gap:8px;align-items:baseline;color:#1C1B19;text-decoration:none;font-size:14px;font-weight:500"><span style="font:400 10px/1 'JetBrains Mono',monospace;color:#6B6761">{{ c.num }}</span>{{ c.name }}</a>
+    </sc-for>
+  </nav>
+</section>
+
+<sc-for list="{{ cols }}" as="c" hint-placeholder-count="5">
+  <section id="{{ c.id }}" data-theme="{{ c.theme }}" data-screen-label="{{ c.label }}" style="background:{{ c.bg }};color:{{ c.fg }};padding:clamp(72px,9vw,140px) clamp(20px,3.4vw,48px)">
+    <div style="max-width:1680px;margin:0 auto;display:flex;flex-wrap:wrap;flex-direction:{{ c.dir }};gap:40px clamp(32px,6vw,120px);align-items:center">
+      <div onMouseEnter="{{ hoverOn }}" onMouseLeave="{{ hoverOff }}" data-reveal="" style="flex:1.3 1 480px;position:relative;aspect-ratio:{{ c.ratio }};overflow:hidden;background:{{ c.ph }};color:{{ c.phInk }};clip-path:inset(calc((1 - var(--in,0)) * 100%) 0 0 0);transition:clip-path 1.6s cubic-bezier(.7,0,.2,1)">
+        <div data-parallax=".06" style="position:absolute;left:0;right:0;top:-9%;bottom:-9%;transform:translateY(var(--py,0px)) scale(calc(1.02 + var(--h,0) * .03));transition:transform 1.4s cubic-bezier(.2,.7,.2,1)">
+          <image-slot id="{{ c.slot }}" shape="rect" placeholder="{{ c.cap }}" style="position:absolute;inset:0;width:100%;height:100%"></image-slot>
+        </div>
+      </div>
+      <div data-reveal="" style="flex:1 1 360px;display:flex;flex-direction:column;gap:28px;max-width:520px">
+        <span style="font:400 11px/1 'JetBrains Mono',monospace;letter-spacing:.14em;text-transform:uppercase;color:{{ c.muted }}">{{ c.num }} — {{ c.count }} pieces</span>
+        <h2 style="margin:0;font-weight:500;font-stretch:82%;font-size:clamp(52px,7vw,124px);line-height:.86;letter-spacing:-.035em;text-transform:uppercase"><span style="display:block;overflow:hidden;padding:0 .1em .04em 0;margin-right:-.1em"><span style="display:block;transform:translateY(calc((1 - var(--in,0)) * 108%));transition:transform 1.4s cubic-bezier(.2,.7,.1,1)">{{ c.name }}</span></span></h2>
+        <p style="margin:0;font-size:16px;line-height:1.65;color:{{ c.body }};text-wrap:pretty;opacity:var(--in,0);transition:opacity 1.2s ease .4s">{{ c.text }}</p>
+        <div style="display:flex;flex-direction:column;border-top:1px solid {{ c.rule }};opacity:var(--in,0);transition:opacity 1.2s ease .55s">
+          <sc-for list="{{ c.items }}" as="it" hint-placeholder-count="3">
+            <a href="{{ it.href }}" style="display:flex;justify-content:space-between;gap:16px;padding:14px 0;border-bottom:1px solid {{ c.rule }};color:inherit;text-decoration:none;font-size:14px"><span>{{ it.name }}</span><span style="font-family:'JetBrains Mono',monospace;font-size:12px">{{ it.price }}</span></a>
+          </sc-for>
+        </div>
+        <a href="{{ c.href }}" style="align-self:flex-start;color:inherit;font-size:13px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;text-underline-offset:6px">Shop {{ c.name }}</a>
+      </div>
+    </div>
+  </section>
+</sc-for>
+
+<dc-import name="SiteFooter" hint-size="100%,900px"></dc-import>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  componentDidMount() {
+    this.onReady = () => this.forceUpdate();
+    window.addEventListener('halden:ready', this.onReady);
+    const boot = () => { if (window.HALDEN_MOTION) window.HALDEN_MOTION.start(); else setTimeout(boot, 50); };
+    boot();
+    if (window.HALDEN) this.forceUpdate();
+  }
+  componentWillUnmount() { window.removeEventListener('halden:ready', this.onReady); }
+  renderVals() {
+    const H = window.HALDEN;
+    const copy = {
+      strength: ['Strength — bench, rack and bar against raw plaster', 'The core of the catalogue. Benches, racks, bars and free weights engineered to commercial ratings and finished like furniture. Built to be loaded hard and left out in plain sight.', 'Shop.dc.html?c=Strength', '1 / 1'],
+      cardio: ['Cardio — walnut rower and slat treadmill, morning light', 'Two machines, made properly. A slat-belt treadmill quiet enough for an apartment, and a water rower in solid walnut that stands upright when you are done.', 'Shop.dc.html?c=Cardio', '4 / 5'],
+      'home-gym': ['Home gym — complete room, concrete floor and oak joinery', 'A considered starting point for a dedicated room: bench, dumbbells, rack, rower, mat and mirror. Our studio will plan the layout around your space at no cost.', 'Shop.dc.html?line=gym', '16 / 11'],
+      accessories: ['Accessories — rubber mat, rollers and towel, still life', 'The details that make a session: recovery tools and natural-rubber mats edged in vegetable-tanned leather.', 'Shop.dc.html?c=Accessories', '4 / 5'],
+      home: ['Home — plaster lamp, arched mirror and linen in soft light', 'Mirrors, light, textiles and storage for the rooms around the room. Made in the same workshops as our equipment, to the same tolerances.', 'Shop.dc.html?line=home', '1 / 1']
+    };
+    const themes = [
+      { bg: '#F2EFEA', fg: '#1C1B19', muted: '#6B6761', body: '#4A4743', rule: 'rgba(28,27,25,.14)', ph: '#E3DED6', phInk: '#8C877F', theme: 'light' },
+      { bg: '#1A1917', fg: '#F2EFEA', muted: '#9C978F', body: '#D9D3CA', rule: 'rgba(242,239,234,.16)', ph: '#262421', phInk: '#7D786F', theme: 'dark' },
+      { bg: '#F7F5F1', fg: '#1C1B19', muted: '#6B6761', body: '#4A4743', rule: 'rgba(28,27,25,.14)', ph: '#E3DED6', phInk: '#8C877F', theme: 'light' },
+      { bg: '#F2EFEA', fg: '#1C1B19', muted: '#6B6761', body: '#4A4743', rule: 'rgba(28,27,25,.14)', ph: '#E3DED6', phInk: '#8C877F', theme: 'light' },
+      { bg: '#E5DCCF', fg: '#2A2520', muted: '#6B6258', body: '#4E463E', rule: 'rgba(42,37,32,.16)', ph: '#D6CBBB', phInk: '#8A8074', theme: 'light' }
+    ];
+    const cols = (H ? H.collections : []).map((c, i) => {
+      const k = copy[c.id], items = H.inCollection(c.id);
+      return {
+        ...themes[i], id: c.id, name: c.name, num: String(i + 1).padStart(2, '0'), label: 'Collection ' + c.name,
+        anchor: '#' + c.id, count: items.length, cap: k[0], text: k[1], href: k[2], ratio: k[3], slot: 'collection-' + c.id,
+        dir: i % 2 ? 'row-reverse' : 'row',
+        items: items.slice(0, 4).map(p => ({ name: p.name + ' — ' + p.type, price: H.money(p.price), href: 'Product.dc.html?id=' + p.id }))
+      };
+    });
+    return {
+      cols,
+      hoverOn: e => e.currentTarget.setAttribute('data-hover', '1'),
+      hoverOff: e => e.currentTarget.setAttribute('data-hover', '0')
+    };
+  }
+}
+</script>
+</body>
+</html>

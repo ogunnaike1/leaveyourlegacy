@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<title>Checkout — HALDEN</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,300..700&amp;family=Instrument+Serif:ital@0;1&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap">
+<style>
+html,body{margin:0;background:#F7F5F1;-webkit-font-smoothing:antialiased}
+a{color:#1C1B19}a:hover{color:#000}
+input,select{font:inherit}
+input:focus,select:focus{outline:none;border-color:#1C1B19 !important}
+</style>
+<script src="./store.js"></script>
+<script src="./motion.js"></script>
+<script src="./image-slot.js"></script>
+</helmet>
+<div style="font-family:'Archivo',sans-serif;color:#1C1B19;background:#F7F5F1;min-height:100vh">
+<header style="height:76px;display:flex;justify-content:space-between;align-items:center;padding:0 clamp(20px,3.4vw,48px);border-bottom:1px solid rgba(28,27,25,.1)">
+  <a href="Home.dc.html" style="color:inherit;text-decoration:none;font-weight:600;font-stretch:118%;font-size:16px;letter-spacing:.34em">HALDEN</a>
+  <a href="Shop.dc.html" style="font-size:13px;color:#4A4743;text-decoration:none">← Continue shopping</a>
+</header>
+
+<sc-if value="{{ placed }}" hint-placeholder-val="{{ false }}">
+  <section style="max-width:720px;margin:0 auto;padding:clamp(96px,12vw,180px) 24px;display:flex;flex-direction:column;gap:24px">
+    <span style="font:400 11px/1 'JetBrains Mono',monospace;letter-spacing:.14em;text-transform:uppercase;color:#6B6761">Order {{ orderNo }}</span>
+    <h1 style="margin:0;font-weight:500;font-stretch:82%;font-size:clamp(48px,7vw,96px);line-height:.9;letter-spacing:-.03em;text-transform:uppercase">Thank you.</h1>
+    <p style="margin:0;font-size:17px;line-height:1.6;color:#3A3835;max-width:520px">A confirmation is on its way to {{ email }}. Our delivery team will call within two working days to arrange a time.</p>
+    <a href="Home.dc.html" style="align-self:flex-start;margin-top:16px;display:inline-flex;align-items:center;height:54px;padding:0 30px;background:#1C1B19;color:#F2EFEA;text-decoration:none;font-size:12px;font-weight:500;letter-spacing:.14em;text-transform:uppercase">Back to Halden</a>
+  </section>
+</sc-if>
+
+<sc-if value="{{ notPlaced }}" hint-placeholder-val="{{ true }}">
+<form onSubmit="{{ submit }}" style="max-width:1280px;margin:0 auto;padding:clamp(40px,5vw,72px) clamp(20px,3.4vw,48px) 120px;display:flex;flex-wrap:wrap-reverse;gap:48px clamp(40px,6vw,96px);align-items:flex-start">
+  <div style="flex:1.4 1 520px;display:flex;flex-direction:column;gap:48px;min-width:0">
+    <h1 style="margin:0;font-weight:500;font-stretch:82%;font-size:clamp(40px,4.4vw,64px);line-height:.9;letter-spacing:-.03em;text-transform:uppercase">Checkout</h1>
+
+    <fieldset style="border:0;margin:0;padding:0;display:flex;flex-direction:column;gap:14px">
+      <legend style="padding:0 0 18px;display:flex;gap:14px;align-items:baseline;font-size:18px;font-weight:500"><span style="font:400 11px/1 'JetBrains Mono',monospace;color:#6B6761">01</span>Contact</legend>
+      <input type="email" required="" placeholder="Email" value="{{ email }}" onChange="{{ onEmail }}" style="height:54px;padding:0 16px;border:1px solid rgba(28,27,25,.22);background:#FFFFFF;font-size:15px;color:#1C1B19;transition:border-color .2s">
+      <input type="tel" placeholder="Phone (for delivery scheduling)" style="height:54px;padding:0 16px;border:1px solid rgba(28,27,25,.22);background:#FFFFFF;font-size:15px;color:#1C1B19">
+      <label style="display:flex;gap:10px;align-items:center;font-size:14px;color:#4A4743;cursor:pointer"><input type="checkbox" style="width:16px;height:16px;accent-color:#1C1B19;margin:0"> Email me about new pieces and product drops</label>
+    </fieldset>
+
+    <fieldset style="border:0;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,200px),1fr));gap:14px">
+      <legend style="padding:0 0 18px;display:flex;gap:14px;align-items:baseline;font-size:18px;font-weight:500"><span style="font:400 11px/1 'JetBrains Mono',monospace;color:#6B6761">02</span>Delivery</legend>
+      <input required="" placeholder="First name" style="height:54px;padding:0 16px;border:1px solid rgba(28,27,25,.22);background:#FFFFFF;font-size:15px;color:#1C1B19">
+      <input required="" placeholder="Last name" style="height:54px;padding:0 16px;border:1px solid rgba(28,27,25,.22);background:#FFFFFF;font-size:15px;color:#1C1B19">
+      <input required="" placeholder="Address" style="grid-column:1 / -1;height:54px;padding:0 16px;border:1px solid rgba(28,27,25,.22);background:#FFFFFF;font-size:15px;color:#1C1B19">
+      <input placeholder="Apartment, floor, access notes (optional)" style="grid-column:1 / -1;height:54px;padding:0 16px;border:1px solid rgba(28,27,25,.22);background:#FFFFFF;font-size:15px;color:#1C1B19">
+      <input required="" placeholder="City" style="height:54px;padding:0 16px;border:1px solid rgba(28,27,25,.22);background:#FFFFFF;font-size:15px;color:#1C1B19">
+      <input required="" placeholder="Postcode" style="height:54px;padding:0 16px;border:1px solid rgba(28,27,25,.22);background:#FFFFFF;font-size:15px;color:#1C1B19">
+      <select style="grid-column:1 / -1;height:54px;padding:0 16px;border:1px solid rgba(28,27,25,.22);background:#FFFFFF;font-size:15px;color:#1C1B19">
+        <option>Switzerland</option><option>Germany</option><option>United Kingdom</option><option>United States</option><option>France</option><option>Netherlands</option>
+      </select>
+    </fieldset>
+
+    <fieldset style="border:0;margin:0;padding:0;display:flex;flex-direction:column;gap:10px">
+      <legend style="padding:0 0 18px;display:flex;gap:14px;align-items:baseline;font-size:18px;font-weight:500"><span style="font:400 11px/1 'JetBrains Mono',monospace;color:#6B6761">03</span>Shipping</legend>
+      <sc-for list="{{ ships }}" as="sh" hint-placeholder-count="3">
+        <button type="button" onClick="{{ sh.pick }}" style="appearance:none;display:grid;grid-template-columns:20px 1fr auto;gap:14px;align-items:center;text-align:left;padding:18px 16px;border:1px solid {{ sh.border }};background:#FFFFFF;cursor:pointer;color:#1C1B19;transition:border-color .25s">
+          <span style="width:16px;height:16px;border-radius:50%;box-sizing:border-box;border:1px solid #1C1B19;box-shadow:inset 0 0 0 {{ sh.dot }} #1C1B19;transition:box-shadow .25s"></span>
+          <span style="display:flex;flex-direction:column;gap:4px"><span style="font-size:15px;font-weight:500">{{ sh.name }}</span><span style="font-size:13px;color:#6B6761">{{ sh.note }}</span></span>
+          <span style="font:400 13px/1 'JetBrains Mono',monospace">{{ sh.priceFmt }}</span>
+        </button>
+      </sc-for>
+    </fieldset>
+
+    <fieldset style="border:0;margin:0;padding:0;display:flex;flex-direction:column;gap:14px">
+      <legend style="padding:0 0 18px;display:flex;gap:14px;align-items:baseline;font-size:18px;font-weight:500"><span style="font:400 11px/1 'JetBrains Mono',monospace;color:#6B6761">04</span>Payment</legend>
+      <div style="display:flex;border:1px solid rgba(28,27,25,.22)">
+        <sc-for list="{{ pays }}" as="py" hint-placeholder-count="3">
+          <button type="button" onClick="{{ py.pick }}" style="appearance:none;flex:1;height:48px;border:0;background:{{ py.bg }};color:{{ py.fg }};font:500 12px/1 'Archivo',sans-serif;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;transition:background .25s,color .25s">{{ py.name }}</button>
+        </sc-for>
+      </div>
+      <sc-if value="{{ isCard }}" hint-placeholder-val="{{ true }}">
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,160px),1fr));gap:14px">
+          <input required="" inputmode="numeric" placeholder="Card number" style="grid-column:1 / -1;height:54px;padding:0 16px;border:1px solid rgba(28,27,25,.22);background:#FFFFFF;font-size:15px;color:#1C1B19">
+          <input required="" placeholder="MM / YY" style="height:54px;padding:0 16px;border:1px solid rgba(28,27,25,.22);background:#FFFFFF;font-size:15px;color:#1C1B19">
+          <input required="" placeholder="CVC" style="height:54px;padding:0 16px;border:1px solid rgba(28,27,25,.22);background:#FFFFFF;font-size:15px;color:#1C1B19">
+          <input required="" placeholder="Name on card" style="grid-column:1 / -1;height:54px;padding:0 16px;border:1px solid rgba(28,27,25,.22);background:#FFFFFF;font-size:15px;color:#1C1B19">
+        </div>
+      </sc-if>
+      <sc-if value="{{ notCard }}" hint-placeholder-val="{{ false }}">
+        <p style="margin:0;padding:18px 16px;background:#EFEBE5;font-size:14px;line-height:1.6;color:#4A4743">{{ payNote }}</p>
+      </sc-if>
+    </fieldset>
+
+    <button type="submit" disabled="{{ emptyCart }}" style="height:62px;border:0;background:#1C1B19;color:#F2EFEA;font:500 13px/1 'Archivo',sans-serif;letter-spacing:.14em;text-transform:uppercase;cursor:pointer;display:flex;align-items:center;justify-content:space-between;padding:0 24px;opacity:{{ submitOp }};transition:background .3s" style-hover="background:#000"><span>Place order</span><span style="font-family:'JetBrains Mono',monospace;letter-spacing:0">{{ total }}</span></button>
+    <span style="font-size:12px;color:#6B6761;margin-top:-32px">Secure payment. 30-day trial and free collection on all equipment.</span>
+  </div>
+
+  <aside style="flex:1 1 360px;position:sticky;top:32px;background:#EFEBE5;padding:clamp(24px,2.6vw,36px);display:flex;flex-direction:column;gap:20px;box-sizing:border-box">
+    <span style="font:400 11px/1 'JetBrains Mono',monospace;letter-spacing:.14em;text-transform:uppercase;color:#6B6761">Order summary · {{ count }} items</span>
+    <sc-if value="{{ emptyCart }}" hint-placeholder-val="{{ false }}">
+      <p style="margin:0;font-size:14px;color:#4A4743">Your bag is empty. <a href="Shop.dc.html">Visit the shop</a>.</p>
+    </sc-if>
+    <sc-for list="{{ lines }}" as="l" hint-placeholder-count="2">
+      <div style="display:grid;grid-template-columns:64px 1fr auto;gap:14px;align-items:center">
+        <div style="position:relative;width:64px;height:80px;background:#E0DAD1;color:#8C877F">
+          <image-slot id="{{ l.slot }}" shape="rect" placeholder="" style="position:absolute;inset:0;width:100%;height:100%"></image-slot>
+          <span style="position:absolute;top:-8px;right:-8px;min-width:20px;height:20px;border-radius:10px;background:#1C1B19;color:#F2EFEA;font:400 10px/20px 'JetBrains Mono',monospace;text-align:center">{{ l.qty }}</span>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:4px;min-width:0"><span style="font-size:14px;font-weight:500">{{ l.name }}</span><span style="font-size:12px;color:#6B6761">{{ l.color }}</span></div>
+        <span style="font:400 13px/1 'JetBrains Mono',monospace">{{ l.total }}</span>
+      </div>
+    </sc-for>
+    <div style="display:flex;gap:8px;padding-top:20px;border-top:1px solid rgba(28,27,25,.12)">
+      <input placeholder="Gift card or code" style="flex:1;min-width:0;height:48px;padding:0 14px;border:1px solid rgba(28,27,25,.22);background:#FFFFFF;font-size:14px;color:#1C1B19">
+      <button type="button" style="height:48px;padding:0 18px;border:1px solid #1C1B19;background:transparent;font:500 11px/1 'Archivo',sans-serif;letter-spacing:.12em;text-transform:uppercase;color:#1C1B19;cursor:pointer">Apply</button>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:10px;font-size:14px;color:#3A3835">
+      <div style="display:flex;justify-content:space-between"><span>Subtotal</span><span style="font-family:'JetBrains Mono',monospace;font-size:13px">{{ subtotal }}</span></div>
+      <div style="display:flex;justify-content:space-between"><span>Shipping</span><span style="font-family:'JetBrains Mono',monospace;font-size:13px">{{ shipFmt }}</span></div>
+      <div style="display:flex;justify-content:space-between"><span>VAT (8.1%, included)</span><span style="font-family:'JetBrains Mono',monospace;font-size:13px">{{ vat }}</span></div>
+    </div>
+    <div style="display:flex;justify-content:space-between;align-items:baseline;padding-top:16px;border-top:1px solid rgba(28,27,25,.12)"><span style="font-size:16px;font-weight:500">Total</span><span style="font:400 20px/1 'JetBrains Mono',monospace">{{ total }}</span></div>
+  </aside>
+</form>
+</sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { email: '', ship: 0, pay: 0, placed: false, orderNo: '' };
+  componentDidMount() {
+    this.u = () => this.forceUpdate();
+    window.addEventListener('halden:ready', this.u);
+    window.addEventListener('halden:cart', this.u);
+    if (window.HALDEN) this.forceUpdate();
+  }
+  componentWillUnmount() { window.removeEventListener('halden:ready', this.u); window.removeEventListener('halden:cart', this.u); }
+  renderVals() {
+    const H = window.HALDEN, s = this.state;
+    const lines = H ? H.cart() : [];
+    const sub = H ? H.subtotal() : 0;
+    const ships = [
+      { name: 'White-glove delivery & installation', note: 'Two-person team, room of choice, packaging removed · 2–3 weeks', price: 0 },
+      { name: 'Kerbside delivery', note: 'Smaller items only · 3–5 working days', price: 0 },
+      { name: 'Scheduled evening slot', note: 'Pick a 2-hour window after 6pm', price: 95 }
+    ];
+    const shipPrice = ships[s.ship].price;
+    const total = sub + shipPrice;
+    const pays = ['Card', 'Bank transfer', 'Pay in 3'];
+    const money = n => H ? H.money(n) : '';
+    return {
+      placed: s.placed, notPlaced: !s.placed, orderNo: s.orderNo,
+      email: s.email, onEmail: e => this.setState({ email: e.target.value }),
+      ships: ships.map((x, i) => ({ ...x, priceFmt: x.price ? money(x.price) : 'Included', border: s.ship === i ? '#1C1B19' : 'rgba(28,27,25,.22)', dot: s.ship === i ? '4px' : '0px', pick: () => this.setState({ ship: i }) })),
+      pays: pays.map((n, i) => ({ name: n, bg: s.pay === i ? '#1C1B19' : 'transparent', fg: s.pay === i ? '#F2EFEA' : '#1C1B19', pick: () => this.setState({ pay: i }) })),
+      isCard: s.pay === 0, notCard: s.pay !== 0,
+      payNote: s.pay === 1 ? 'We will email bank details with your confirmation. Your order is reserved for 7 days and scheduled for delivery once payment clears.' : 'Split the total into three interest-free payments over 60 days. You will be redirected to confirm after placing the order.',
+      lines: lines.map(l => ({ name: l.product.name, color: l.color, qty: l.qty, total: money(l.qty * l.product.price), slot: 'p-' + l.id + '-1' })),
+      count: H ? H.count() : 0, emptyCart: lines.length === 0, submitOp: lines.length ? 1 : 0.4,
+      subtotal: money(sub), shipFmt: shipPrice ? money(shipPrice) : 'Included', vat: money(total - total / 1.081), total: money(total),
+      submit: e => { e.preventDefault(); if (!lines.length) return; const no = 'HLD-' + Math.floor(100000 + Math.random() * 899999); H.clear(); this.setState({ placed: true, orderNo: no }); window.scrollTo(0, 0); }
+    };
+  }
+}
+</script>
+</body>
+</html>

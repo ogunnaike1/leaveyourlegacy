@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<script src="./store.js"></script>
+<script src="./motion.js"></script>
+<script src="./image-slot.js"></script>
+</helmet>
+<article onMouseEnter="{{ hoverOn }}" onMouseLeave="{{ hoverOff }}" style="position:relative;display:flex;flex-direction:column;gap:16px;font-family:'Archivo',sans-serif;color:#1C1B19;min-width:0">
+  <div data-cursor="View" style="position:relative;aspect-ratio:{{ ratio }};background:#E8E4DD;overflow:hidden;color:#8C877F">
+    <div style="position:absolute;inset:0;transform:scale(calc(1 + var(--h,0) * .03));transition:transform 1.4s cubic-bezier(.2,.7,.2,1)">
+      <image-slot id="{{ slot1 }}" shape="rect" placeholder="{{ cap1 }}" style="position:absolute;inset:0;width:100%;height:100%"></image-slot>
+    </div>
+    <div style="position:absolute;inset:0;background:#DAD4CA;color:#7A756D;opacity:var(--h,0);transition:opacity .7s ease">
+      <image-slot id="{{ slot2 }}" shape="rect" placeholder="{{ cap2 }}" style="position:absolute;inset:0;width:100%;height:100%"></image-slot>
+    </div>
+    <sc-if value="{{ number }}" hint-placeholder-val="{{ false }}">
+      <span style="position:absolute;top:14px;left:14px;font:400 11px/1 'JetBrains Mono',monospace;letter-spacing:.1em;color:#1C1B19;pointer-events:none">No. {{ number }}</span>
+    </sc-if>
+    <sc-if value="{{ hoverAdd }}" hint-placeholder-val="{{ true }}">
+      <button onClick="{{ add }}" style="position:absolute;left:12px;right:12px;bottom:12px;height:50px;border:0;background:#F7F5F1;color:#1C1B19;display:flex;align-items:center;justify-content:space-between;padding:0 18px;font:500 12px/1 'Archivo',sans-serif;letter-spacing:.12em;text-transform:uppercase;cursor:pointer;opacity:var(--h,0);transform:translateY(calc((1 - var(--h,0)) * 12px));transition:opacity .45s ease,transform .6s cubic-bezier(.2,.7,.2,1),background .3s" style-hover="background:#FFFFFF">
+        <span>{{ addLabel }}</span><span style="font:400 12px/1 'JetBrains Mono',monospace;letter-spacing:0">{{ price }}</span>
+      </button>
+    </sc-if>
+  </div>
+  <div style="display:flex;flex-direction:column;gap:6px">
+    <div style="display:flex;justify-content:space-between;align-items:baseline;gap:12px">
+      <a href="{{ href }}" style="color:inherit;text-decoration:none;font-size:15px;font-weight:500;letter-spacing:.01em">{{ name }}</a>
+      <span style="font:400 13px/1 'JetBrains Mono',monospace;white-space:nowrap">{{ price }}</span>
+    </div>
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;min-height:16px">
+      <span style="font-size:13px;color:#6B6761">{{ type }}</span>
+      <div style="display:flex;gap:6px;align-items:center">
+        <sc-for list="{{ colors }}" as="c" hint-placeholder-count="2">
+          <span title="{{ c.name }}" style="width:10px;height:10px;border-radius:50%;background:{{ c.hex }};box-shadow:inset 0 0 0 1px rgba(0,0,0,.12)"></span>
+        </sc-for>
+      </div>
+    </div>
+    <sc-if value="{{ solidAdd }}" hint-placeholder-val="{{ false }}">
+      <button onClick="{{ add }}" style="margin-top:10px;height:46px;border:1px solid #1C1B19;background:{{ addBg }};color:{{ addFg }};font:500 12px/1 'Archivo',sans-serif;letter-spacing:.12em;text-transform:uppercase;cursor:pointer;transition:background .35s ease,color .35s ease" style-hover="background:#1C1B19;color:#F2EFEA">{{ addLabel }}</button>
+    </sc-if>
+  </div>
+</article>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:&quot;320px&quot;,&quot;height&quot;:&quot;520px&quot;},&quot;pid&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;form-bench&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;ratio&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;4 / 5&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;number&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;alwaysAdd&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;}}">
+class Component extends DCLogic {
+  state = { added: false, coarse: typeof matchMedia !== 'undefined' && matchMedia('(pointer: coarse)').matches };
+  componentDidMount() { this.r = () => this.forceUpdate(); window.addEventListener('halden:ready', this.r); if (window.HALDEN) this.forceUpdate(); }
+  componentWillUnmount() { window.removeEventListener('halden:ready', this.r); clearTimeout(this.t); }
+  renderVals() {
+    const H = window.HALDEN;
+    const p = H && H.byId(this.props.pid || 'form-bench');
+    const s = this.state;
+    const always = !!this.props.alwaysAdd || s.coarse;
+    const add = e => {
+      e && e.stopPropagation();
+      if (!p) return;
+      H.add(p.id, p.colors[0].name, 1, !this.props.alwaysAdd);
+      this.setState({ added: true }); clearTimeout(this.t); this.t = setTimeout(() => this.setState({ added: false }), 1800);
+    };
+    return {
+      ratio: this.props.ratio || '4 / 5',
+      name: p ? p.name : '', type: p ? p.type : '', price: p ? H.money(p.price) : '',
+      colors: p && p.colors.length > 1 ? p.colors : [],
+      href: p ? 'Product.dc.html?id=' + p.id : '#',
+      slot1: 'p-' + (this.props.pid || 'form-bench') + '-1', slot2: 'p-' + (this.props.pid || 'form-bench') + '-2',
+      cap1: (p ? p.name : 'Product') + ' · studio, front ¾', cap2: (p ? p.name : 'Product') + ' · alternate angle',
+      number: this.props.number || '',
+      hoverAdd: !always, solidAdd: always,
+      addLabel: s.added ? 'Added to bag ✓' : (always ? 'Add to bag' : 'Quick add'),
+      addBg: s.added ? '#1C1B19' : 'transparent', addFg: s.added ? '#F2EFEA' : '#1C1B19',
+      add,
+      hoverOn: e => e.currentTarget.setAttribute('data-hover', '1'),
+      hoverOff: e => e.currentTarget.setAttribute('data-hover', '0')
+    };
+  }
+}
+</script>
+</body>
+</html>

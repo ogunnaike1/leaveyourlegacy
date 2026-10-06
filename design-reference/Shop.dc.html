@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<title>Shop — HALDEN</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,300..700&amp;family=Instrument+Serif:ital@0;1&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap">
+<style>
+html,body{margin:0;background:#F7F5F1;-webkit-font-smoothing:antialiased}
+a{color:#1C1B19}a:hover{color:#000}
+::selection{background:#1C1B19;color:#F2EFEA}
+</style>
+<script src="./store.js"></script>
+<script src="./motion.js"></script>
+<script src="./image-slot.js"></script>
+</helmet>
+<div data-theme="light" style="font-family:'Archivo',sans-serif;color:#1C1B19;background:#F7F5F1;min-height:100vh">
+<dc-import name="SiteHeader" current="{{ navKey }}" hint-size="100%,0px"></dc-import>
+
+<section data-screen-label="Shop header" style="padding:clamp(120px,14vw,200px) clamp(20px,3.4vw,48px) 0;max-width:1680px;margin:0 auto">
+  <div data-reveal="" style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-end;gap:24px 48px">
+    <h1 style="margin:0;font-weight:500;font-stretch:80%;font-size:clamp(72px,13vw,220px);line-height:.82;letter-spacing:-.04em;text-transform:uppercase"><span style="display:block;overflow:hidden;padding:0 .1em .03em 0;margin-right:-.1em"><span style="display:block;transform:translateY(calc((1 - var(--in,0)) * 108%));transition:transform 1.4s cubic-bezier(.2,.7,.1,1)">{{ title }}</span></span></h1>
+    <p style="margin:0 0 12px;max-width:360px;font-size:15px;line-height:1.6;color:#4A4743;text-wrap:pretty;opacity:var(--in,0);transition:opacity 1.2s ease .4s">{{ intro }}</p>
+  </div>
+  <nav style="display:flex;gap:clamp(20px,3vw,44px);margin-top:clamp(48px,6vw,88px);overflow-x:auto;scrollbar-width:none;border-bottom:1px solid rgba(28,27,25,.14)">
+    <sc-for list="{{ cats }}" as="c" hint-placeholder-count="5">
+      <button onClick="{{ c.pick }}" style="appearance:none;background:none;border:0;padding:0 0 18px;position:relative;cursor:pointer;display:flex;align-items:flex-start;gap:6px;color:{{ c.color }};font:500 15px/1 'Archivo',sans-serif;white-space:nowrap;transition:color .3s">
+        {{ c.label }}<span style="font:400 10px/1 'JetBrains Mono',monospace;color:#8A857D">{{ c.count }}</span>
+        <span style="position:absolute;left:0;right:0;bottom:-1px;height:1px;background:#1C1B19;transform-origin:left;transform:scaleX({{ c.active }});transition:transform .55s cubic-bezier(.2,.7,.2,1)"></span>
+      </button>
+    </sc-for>
+  </nav>
+  <div style="display:flex;justify-content:space-between;align-items:center;gap:16px;padding:18px 0;border-bottom:1px solid rgba(28,27,25,.08)">
+    <button onClick="{{ toggleFilters }}" style="appearance:none;background:none;border:0;padding:8px 0;cursor:pointer;display:flex;align-items:center;gap:10px;font:500 12px/1 'Archivo',sans-serif;letter-spacing:.12em;text-transform:uppercase;color:#1C1B19">
+      <span style="display:flex;flex-direction:column;gap:4px"><span style="display:block;width:16px;height:1px;background:currentColor"></span><span style="display:block;width:10px;height:1px;background:currentColor;margin-left:3px"></span><span style="display:block;width:4px;height:1px;background:currentColor;margin-left:6px"></span></span>
+      {{ filterLabel }}
+    </button>
+    <span style="font:400 11px/1 'JetBrains Mono',monospace;letter-spacing:.1em;text-transform:uppercase;color:#6B6761">{{ countLabel }}</span>
+    <label style="display:flex;align-items:center;gap:10px;font:500 12px/1 'Archivo',sans-serif;letter-spacing:.12em;text-transform:uppercase;cursor:pointer">
+      <span style="color:#6B6761">Sort</span>
+      <select value="{{ sort }}" onChange="{{ onSort }}" style="appearance:none;-webkit-appearance:none;border:0;background:transparent;font:500 12px/1 'Archivo',sans-serif;letter-spacing:.08em;text-transform:uppercase;color:#1C1B19;cursor:pointer;padding:8px 0;outline:none">
+        <option value="featured">Featured</option>
+        <option value="price-asc">Price, low to high</option>
+        <option value="price-desc">Price, high to low</option>
+        <option value="name">Name</option>
+      </select>
+    </label>
+  </div>
+  <sc-if value="{{ hasChips }}" hint-placeholder-val="{{ false }}">
+    <div style="display:flex;flex-wrap:wrap;gap:8px;padding:16px 0 0">
+      <sc-for list="{{ chips }}" as="ch" hint-placeholder-count="0">
+        <button onClick="{{ ch.remove }}" style="appearance:none;border:1px solid rgba(28,27,25,.2);background:transparent;height:34px;padding:0 14px;display:flex;align-items:center;gap:10px;font:400 13px/1 'Archivo',sans-serif;color:#1C1B19;cursor:pointer;transition:border-color .3s" style-hover="border-color:#1C1B19">{{ ch.label }} <span style="font-size:14px;color:#6B6761">×</span></button>
+      </sc-for>
+      <button onClick="{{ clearAll }}" style="appearance:none;border:0;background:none;height:34px;padding:0 6px;font:400 13px/1 'Archivo',sans-serif;color:#6B6761;text-decoration:underline;text-underline-offset:4px;cursor:pointer">Clear all</button>
+    </div>
+  </sc-if>
+</section>
+
+<section style="max-width:1680px;margin:0 auto;padding:40px clamp(20px,3.4vw,48px) clamp(96px,10vw,160px);display:flex;gap:clamp(32px,3.4vw,56px);align-items:flex-start">
+  <div onClick="{{ closeFilters }}" style="position:fixed;inset:0;z-index:79;background:rgba(18,17,16,.4);opacity:{{ scrimOp }};pointer-events:{{ scrimPE }};transition:opacity .5s ease"></div>
+  <aside style="position:{{ fpPos }};top:{{ fpTop }};left:{{ fpSide }};right:{{ fpSide }};bottom:{{ fpSide }};z-index:{{ fpZ }};width:{{ fpW }};flex:none;height:{{ fpH }};max-height:{{ fpMaxH }};overflow:auto;scrollbar-width:none;background:#F7F5F1;padding:{{ fpPad }};box-sizing:border-box;transform:{{ fpTransform }};opacity:{{ fpOp }};margin-left:{{ fpMargin }};transition:transform .7s cubic-bezier(.7,0,.2,1),opacity .5s ease,margin-left .7s cubic-bezier(.7,0,.2,1);pointer-events:{{ fpPE }}">
+    <sc-if value="{{ isMobile }}" hint-placeholder-val="{{ false }}">
+      <div style="display:flex;justify-content:space-between;align-items:center;padding-bottom:16px;border-bottom:1px solid rgba(28,27,25,.14)">
+        <span style="font-weight:500;font-size:16px">Filter</span>
+        <button onClick="{{ closeFilters }}" style="appearance:none;background:none;border:0;font:500 11px/1 'Archivo',sans-serif;letter-spacing:.14em;text-transform:uppercase;color:#1C1B19;cursor:pointer;padding:12px 0">Close</button>
+      </div>
+    </sc-if>
+    <sc-for list="{{ groups }}" as="g" hint-placeholder-count="4">
+      <div style="padding:22px 0;border-bottom:1px solid rgba(28,27,25,.1)">
+        <span style="display:block;font:400 11px/1 'JetBrains Mono',monospace;letter-spacing:.12em;text-transform:uppercase;color:#6B6761;margin-bottom:16px">{{ g.title }}</span>
+        <div style="display:flex;flex-direction:column;gap:4px">
+          <sc-for list="{{ g.options }}" as="o" hint-placeholder-count="3">
+            <button onClick="{{ o.toggle }}" style="appearance:none;background:none;border:0;padding:7px 0;display:flex;align-items:center;gap:12px;cursor:pointer;font:400 14px/1.2 'Archivo',sans-serif;color:#1C1B19;text-align:left">
+              <span style="width:14px;height:14px;flex:none;box-sizing:border-box;border:1px solid {{ o.border }};border-radius:{{ o.radius }};background:{{ o.fill }};box-shadow:inset 0 0 0 {{ o.ring }} #F7F5F1;transition:background .25s,box-shadow .25s"></span>
+              <span style="flex:1">{{ o.label }}</span>
+              <span style="font:400 10px/1 'JetBrains Mono',monospace;color:#8A857D;padding-right:4px">{{ o.count }}</span>
+            </button>
+          </sc-for>
+        </div>
+      </div>
+    </sc-for>
+    <sc-if value="{{ isMobile }}" hint-placeholder-val="{{ false }}">
+      <div style="position:sticky;bottom:0;background:#F7F5F1;padding:16px 0 4px;display:flex;gap:12px">
+        <button onClick="{{ clearAll }}" style="flex:1;height:54px;border:1px solid #1C1B19;background:transparent;font:500 12px/1 'Archivo',sans-serif;letter-spacing:.12em;text-transform:uppercase;color:#1C1B19;cursor:pointer">Clear</button>
+        <button onClick="{{ closeFilters }}" style="flex:2;height:54px;border:0;background:#1C1B19;color:#F2EFEA;font:500 12px/1 'Archivo',sans-serif;letter-spacing:.12em;text-transform:uppercase;cursor:pointer">Show {{ count }} products</button>
+      </div>
+    </sc-if>
+  </aside>
+  <div style="flex:1;min-width:0">
+    <div ref="{{ gridRef }}" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(min(calc(50% - 10px),290px),1fr));gap:56px 20px">
+      <sc-for list="{{ items }}" as="p" hint-placeholder-count="9">
+        <div data-item="">
+          <dc-import name="ProductCard" pid="{{ p.id }}" hint-size="100%,460px"></dc-import>
+        </div>
+      </sc-for>
+    </div>
+    <sc-if value="{{ none }}" hint-placeholder-val="{{ false }}">
+      <div style="padding:96px 0;display:flex;flex-direction:column;gap:20px;align-items:flex-start">
+        <p style="margin:0;font-family:'Instrument Serif',serif;font-size:40px;line-height:1.1">Nothing fits all of that.</p>
+        <button onClick="{{ clearAll }}" style="appearance:none;background:none;border:0;padding:0;font:500 13px/1 'Archivo',sans-serif;letter-spacing:.06em;color:#1C1B19;text-decoration:underline;text-underline-offset:5px;cursor:pointer">Clear filters</button>
+      </div>
+    </sc-if>
+  </div>
+</section>
+
+<dc-import name="SiteFooter" hint-size="100%,900px"></dc-import>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  constructor(p) {
+    super(p);
+    const q = new URLSearchParams(location.search);
+    const vw = window.innerWidth;
+    this.state = { cat: q.get('c') || 'All', line: q.get('line') || '', sel: { price: [], equipment: [], color: [], avail: [] }, sort: 'featured', open: vw >= 900, vw };
+  }
+  gridRef = React.createRef();
+  componentDidMount() {
+    this.onReady = () => this.forceUpdate();
+    this.onResize = () => { const vw = window.innerWidth; if ((vw < 900) !== (this.state.vw < 900)) this.setState({ vw, open: vw >= 900 }); else this.setState({ vw }); };
+    window.addEventListener('halden:ready', this.onReady);
+    window.addEventListener('resize', this.onResize);
+    const boot = () => { if (window.HALDEN_MOTION) window.HALDEN_MOTION.start(); else setTimeout(boot, 50); };
+    boot();
+    if (window.HALDEN) this.forceUpdate();
+  }
+  componentWillUnmount() { window.removeEventListener('halden:ready', this.onReady); window.removeEventListener('resize', this.onResize); }
+  componentDidUpdate() {
+    const s = this.state, k = [s.cat, s.line, s.sort, JSON.stringify(s.sel)].join('|');
+    if (this._k && this._k !== k) this.animateGrid();
+    this._k = k;
+  }
+  animateGrid() {
+    const g = this.gridRef.current; if (!g || (window.HALDEN_MOTION && window.HALDEN_MOTION.reduced)) return;
+    [...g.querySelectorAll('[data-item]')].forEach((el, i) => {
+      el.animate([{ opacity: 0, transform: 'translateY(18px)' }, { opacity: 1, transform: 'none' }], { duration: 700, delay: Math.min(i, 8) * 45, easing: 'cubic-bezier(.2,.7,.1,1)', fill: 'backwards' });
+    });
+  }
+  renderVals() {
+    const H = window.HALDEN, s = this.state, m = s.vw < 900;
+    const all = H ? H.products : [];
+    const base = s.line ? all.filter(p => p.line === s.line) : all;
+    const ranges = [{ k: 'Under $250', a: 0, b: 250 }, { k: '$250 – $1,000', a: 250, b: 1000 }, { k: '$1,000 – $5,000', a: 1000, b: 5000 }, { k: '$5,000 and above', a: 5000, b: 1e9 }];
+    const availOf = p => p.stock === 'Made to order' ? 'Made to order' : 'In stock';
+    const test = (p, skip) => (s.cat === 'All' || p.category === s.cat)
+      && (skip === 'price' || !s.sel.price.length || s.sel.price.some(k => { const r = ranges.find(x => x.k === k); return p.price >= r.a && p.price < r.b; }))
+      && (skip === 'equipment' || !s.sel.equipment.length || s.sel.equipment.includes(p.equipment))
+      && (skip === 'color' || !s.sel.color.length || p.colors.some(c => s.sel.color.includes(c.name)))
+      && (skip === 'avail' || !s.sel.avail.length || s.sel.avail.includes(availOf(p)));
+    let items = base.filter(p => test(p));
+    if (s.sort === 'price-asc') items = [...items].sort((a, b) => a.price - b.price);
+    if (s.sort === 'price-desc') items = [...items].sort((a, b) => b.price - a.price);
+    if (s.sort === 'name') items = [...items].sort((a, b) => a.name.localeCompare(b.name));
+    const toggle = (g, v) => this.setState(st => { const cur = st.sel[g]; return { sel: { ...st.sel, [g]: cur.includes(v) ? cur.filter(x => x !== v) : [...cur, v] } }; });
+    const opt = (g, label, n, swatch) => {
+      const on = s.sel[g].includes(label);
+      return { label, count: n, toggle: () => toggle(g, label), border: swatch ? 'rgba(0,0,0,.18)' : '#1C1B19', radius: swatch ? '50%' : '0', fill: swatch ? swatch : (on ? '#1C1B19' : 'transparent'), ring: swatch ? (on ? '2px' : '0px') : (on ? '3px' : '0px') };
+    };
+    const pool = g => base.filter(p => test(p, g));
+    const cats = ['All', 'Strength', 'Cardio', 'Accessories', 'Home'].map(c => {
+      const n = c === 'All' ? base.length : base.filter(p => p.category === c).length;
+      return { label: c === 'All' ? 'All' : c, count: n, active: s.cat === c ? 1 : 0, color: s.cat === c ? '#1C1B19' : '#6B6761', pick: () => this.setState({ cat: c }) };
+    }).filter(c => c.count > 0 || c.label === 'All');
+    const equipment = [...new Set(base.map(p => p.equipment))];
+    const colorMap = {}; base.forEach(p => p.colors.forEach(c => { colorMap[c.name] = c.hex; }));
+    const groups = [
+      { title: 'Price', options: ranges.map(r => opt('price', r.k, pool('price').filter(p => p.price >= r.a && p.price < r.b).length)) },
+      { title: 'Equipment type', options: equipment.map(e => opt('equipment', e, pool('equipment').filter(p => p.equipment === e).length)) },
+      { title: 'Colour & finish', options: Object.keys(colorMap).map(c => opt('color', c, pool('color').filter(p => p.colors.some(x => x.name === c)).length, colorMap[c])) },
+      { title: 'Availability', options: ['In stock', 'Made to order'].map(a => opt('avail', a, pool('avail').filter(p => availOf(p) === a).length)) }
+    ];
+    const chips = [];
+    Object.keys(s.sel).forEach(g => s.sel[g].forEach(v => chips.push({ label: v, remove: () => toggle(g, v) })));
+    const nSel = chips.length;
+    const titles = { gym: ['Gym', 'Strength and cardio equipment, rated for commercial use and proportioned for the home.'], home: ['Home', 'Mirrors, light, textiles and storage — made in the same workshops, to the same tolerances.'] };
+    const t = titles[s.line] || ['Shop', 'Equipment, accessories and objects for rooms where training is part of living.'];
+    const open = s.open;
+    return {
+      navKey: s.line || 'shop', title: s.cat !== 'All' && !s.line ? s.cat : t[0], intro: t[1],
+      cats, groups, chips, hasChips: chips.length > 0, isMobile: m,
+      items: items.map(p => ({ id: p.id })), none: items.length === 0, count: items.length,
+      countLabel: items.length + (items.length === 1 ? ' product' : ' products'),
+      filterLabel: m ? 'Filter' + (nSel ? ' (' + nSel + ')' : '') : (open ? 'Hide filters' : 'Show filters') + (nSel ? ' (' + nSel + ')' : ''),
+      toggleFilters: () => this.setState({ open: !open }), closeFilters: () => this.setState({ open: m ? false : open }),
+      clearAll: () => this.setState({ sel: { price: [], equipment: [], color: [], avail: [] } }),
+      sort: s.sort, onSort: e => this.setState({ sort: e.target.value }),
+      gridRef: this.gridRef,
+      fpPos: m ? 'fixed' : 'sticky', fpSide: m ? '0' : 'auto', fpTop: m ? 'auto' : '100px', fpZ: m ? 80 : 1, fpW: m ? 'auto' : '240px',
+      fpH: m ? '86vh' : 'auto', fpMaxH: m ? '86vh' : 'calc(100vh - 120px)', fpPad: m ? '20px 20px 0' : '0',
+      fpTransform: m ? (open ? 'translateY(0)' : 'translateY(102%)') : 'none',
+      fpOp: m ? 1 : (open ? 1 : 0), fpMargin: m ? '0' : (open ? '0' : '-296px'), fpPE: open ? 'auto' : 'none',
+      scrimOp: m && open ? 1 : 0, scrimPE: m && open ? 'auto' : 'none'
+    };
+  }
+}
+</script>
+</body>
+</html>

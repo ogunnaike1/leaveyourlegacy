@@ -1,0 +1,26 @@
+import Image from 'next/image';
+import { IMAGES } from '@/lib/images';
+
+type Props = { id: string; caption?: string; sizes?: string; priority?: boolean };
+
+/**
+ * Replaces the prototype's <image-slot>: fills its (positioned) parent. Backdrop colour and caption colour
+ * come from the parent, exactly as before. Shows next/image when /lib/images.ts has a file for this id.
+ */
+export default function ImageSlot({ id, caption = '', sizes = '100vw', priority }: Props) {
+  const src = IMAGES[id];
+  if (src) {
+    return <Image src={src} alt={caption} fill sizes={sizes} priority={priority} className="object-cover" />;
+  }
+  return (
+    <div data-slot={id} className="absolute inset-0 overflow-hidden bg-[rgba(127,127,127,.08)]" style={{ font: '13px/1.3 system-ui,-apple-system,sans-serif' }}>
+      <div className="absolute inset-0 box-border flex select-none flex-col items-center justify-center gap-[6px] p-3 text-center">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" className="opacity-45">
+          <rect x="3" y="3" width="18" height="18" rx="2" /><circle cx="8.5" cy="8.5" r="1.5" /><path d="m21 15-5-5L5 21" />
+        </svg>
+        {caption ? <div className="max-w-[90%] font-medium tracking-[.01em] opacity-75">{caption}</div> : null}
+      </div>
+      <div className="pointer-events-none absolute inset-0 border-[1.5px] border-dashed border-current opacity-35" />
+    </div>
+  );
+}

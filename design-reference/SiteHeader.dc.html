@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<script src="./store.js"></script>
+<script src="./motion.js"></script>
+<script src="./image-slot.js"></script>
+</helmet>
+<header style="position:fixed;top:0;left:0;right:0;z-index:50;height:{{ headH }};display:grid;grid-template-columns:1fr auto 1fr;align-items:center;padding:0 clamp(20px,3.4vw,48px);color:{{ fg }};background:{{ bg }};backdrop-filter:{{ blur }};-webkit-backdrop-filter:{{ blur }};border-bottom:1px solid {{ rule }};transition:background .5s ease,color .5s ease,border-color .5s ease,transform .6s cubic-bezier(.7,0,.2,1);transform:{{ headY }};font-family:'Archivo',sans-serif">
+  <div style="display:flex;align-items:center;gap:28px">
+    <sc-if value="{{ isMobile }}" hint-placeholder-val="{{ false }}">
+      <button onClick="{{ openMenu }}" style="appearance:none;background:none;border:0;padding:12px 12px 12px 0;color:inherit;font:500 12px/1 'Archivo',sans-serif;letter-spacing:.14em;text-transform:uppercase;cursor:pointer;display:flex;align-items:center;gap:10px">
+        <span style="display:flex;flex-direction:column;gap:5px"><span style="display:block;width:20px;height:1px;background:currentColor"></span><span style="display:block;width:14px;height:1px;background:currentColor"></span></span>
+        Menu
+      </button>
+    </sc-if>
+    <sc-if value="{{ isDesktop }}" hint-placeholder-val="{{ true }}">
+      <a href="Home.dc.html" style="color:inherit;text-decoration:none;font-weight:600;font-stretch:118%;font-size:17px;letter-spacing:.34em">HALDEN</a>
+    </sc-if>
+  </div>
+  <sc-if value="{{ isDesktop }}" hint-placeholder-val="{{ true }}">
+    <nav style="display:flex;gap:40px;align-items:center">
+      <sc-for list="{{ nav }}" as="n" hint-placeholder-count="4">
+        <a href="{{ n.href }}" onMouseEnter="{{ hoverOn }}" onMouseLeave="{{ hoverOff }}" style="position:relative;color:inherit;text-decoration:none;font-size:13px;font-weight:500;letter-spacing:.06em;padding:8px 0">
+          {{ n.label }}
+          <span style="position:absolute;left:0;right:0;bottom:2px;height:1px;background:currentColor;transform-origin:left;transform:scaleX(calc(max(var(--h,0), {{ n.active }})));transition:transform .45s cubic-bezier(.2,.7,.2,1)"></span>
+        </a>
+      </sc-for>
+    </nav>
+  </sc-if>
+  <sc-if value="{{ isMobile }}" hint-placeholder-val="{{ false }}">
+    <a href="Home.dc.html" style="color:inherit;text-decoration:none;font-weight:600;font-stretch:118%;font-size:15px;letter-spacing:.3em;padding-left:.3em">HALDEN</a>
+  </sc-if>
+  <div style="display:flex;justify-content:flex-end;align-items:center;gap:6px">
+    <button onClick="{{ openSearch }}" aria-label="Search" style="appearance:none;background:none;border:0;color:inherit;width:44px;height:44px;display:flex;align-items:center;justify-content:center;cursor:pointer">
+      <svg width="19" height="19" viewBox="0 0 24 24" style="fill:none;stroke:currentColor;stroke-width:1.4;stroke-linecap:round"><circle cx="11" cy="11" r="7.5"></circle><path d="m20.5 20.5-4.2-4.2"></path></svg>
+    </button>
+    <sc-if value="{{ isDesktop }}" hint-placeholder-val="{{ true }}">
+      <a href="Checkout.dc.html" aria-label="Account" style="color:inherit;width:44px;height:44px;display:flex;align-items:center;justify-content:center">
+        <svg width="19" height="19" viewBox="0 0 24 24" style="fill:none;stroke:currentColor;stroke-width:1.4;stroke-linecap:round"><circle cx="12" cy="8" r="4.5"></circle><path d="M20 21a8 8 0 0 0-16 0"></path></svg>
+      </a>
+    </sc-if>
+    <button onClick="{{ openCart }}" aria-label="Bag" style="appearance:none;background:none;border:0;color:inherit;height:44px;padding:0 0 0 10px;display:flex;align-items:center;gap:8px;cursor:pointer;font:500 12px/1 'JetBrains Mono',monospace">
+      <svg width="19" height="19" viewBox="0 0 24 24" style="fill:none;stroke:currentColor;stroke-width:1.4;stroke-linejoin:round"><path d="M5 8h14l-1 13H6L5 8Z"></path><path d="M9 8V6a3 3 0 0 1 6 0v2"></path></svg>
+      <span style="display:inline-block;min-width:14px;transform:scale({{ bumpScale }});transition:transform .4s cubic-bezier(.3,1.6,.5,1)">{{ count }}</span>
+    </button>
+  </div>
+</header>
+
+<div style="position:fixed;inset:0;z-index:60;background:#121110;color:#F2EFEA;font-family:'Archivo',sans-serif;display:flex;flex-direction:column;padding:0 24px 32px;clip-path:{{ menuClip }};transition:clip-path .8s cubic-bezier(.7,0,.2,1);pointer-events:{{ menuPE }}">
+  <div style="height:64px;display:flex;align-items:center;justify-content:space-between">
+    <span style="font-weight:600;font-stretch:118%;font-size:15px;letter-spacing:.3em">HALDEN</span>
+    <button onClick="{{ closeMenu }}" style="appearance:none;background:none;border:0;color:inherit;font:500 12px/1 'Archivo',sans-serif;letter-spacing:.14em;text-transform:uppercase;padding:14px 0;cursor:pointer">Close</button>
+  </div>
+  <nav style="display:flex;flex-direction:column;gap:4px;margin-top:9vh">
+    <sc-for list="{{ nav }}" as="n" hint-placeholder-count="4">
+      <a href="{{ n.href }}" style="color:inherit;text-decoration:none;display:flex;align-items:baseline;gap:16px;padding:8px 0;border-bottom:1px solid rgba(242,239,234,.12);overflow:hidden">
+        <span style="font:400 11px/1 'JetBrains Mono',monospace;color:#9C978F">0{{ n.num }}</span>
+        <span style="display:block;font-weight:500;font-stretch:84%;font-size:clamp(44px,13vw,72px);line-height:1;letter-spacing:-.02em;text-transform:uppercase;transform:{{ menuItemY }};transition:transform .9s cubic-bezier(.2,.7,.2,1) {{ n.delay }}">{{ n.label }}</span>
+      </a>
+    </sc-for>
+  </nav>
+  <div style="margin-top:auto;display:flex;flex-wrap:wrap;gap:12px 24px;font-size:13px;color:#B9B3AA">
+    <a href="Checkout.dc.html" style="color:inherit;text-decoration:none">Account</a>
+    <a href="Home.dc.html#journal" style="color:inherit;text-decoration:none">Shipping &amp; Returns</a>
+    <a href="Home.dc.html" style="color:inherit;text-decoration:none">Contact</a>
+    <a href="Home.dc.html" style="color:inherit;text-decoration:none">Instagram</a>
+  </div>
+</div>
+
+<div onClick="{{ closeSearch }}" style="position:fixed;inset:0;z-index:55;background:rgba(18,17,16,.4);opacity:{{ searchOp }};pointer-events:{{ searchPE }};transition:opacity .5s ease"></div>
+<div style="position:fixed;left:0;right:0;top:0;z-index:56;background:#F2EFEA;color:#1C1B19;font-family:'Archivo',sans-serif;padding:clamp(20px,3.4vw,48px);transform:{{ searchY }};transition:transform .7s cubic-bezier(.7,0,.2,1);max-height:88vh;overflow:auto">
+  <div style="display:flex;justify-content:space-between;align-items:center;font:400 11px/1 'JetBrains Mono',monospace;letter-spacing:.1em;text-transform:uppercase;color:#6B6761">
+    <span>Search</span>
+    <button onClick="{{ closeSearch }}" style="appearance:none;background:none;border:0;font:inherit;letter-spacing:inherit;text-transform:inherit;color:#1C1B19;cursor:pointer;padding:12px 0">Close</button>
+  </div>
+  <input ref="{{ searchRef }}" value="{{ q }}" onChange="{{ onQ }}" placeholder="Bench, dumbbells, mirror…" style="width:100%;margin-top:16px;border:0;border-bottom:1px solid #1C1B19;background:transparent;outline:none;font-family:'Archivo',sans-serif;font-weight:400;font-stretch:90%;font-size:clamp(32px,5vw,64px);letter-spacing:-.02em;padding:8px 0 16px;color:#1C1B19">
+  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:0 32px;margin-top:24px">
+    <sc-for list="{{ results }}" as="r" hint-placeholder-count="0">
+      <a href="{{ r.href }}" style="display:flex;justify-content:space-between;align-items:baseline;gap:16px;padding:14px 0;border-bottom:1px solid rgba(28,27,25,.12);color:inherit;text-decoration:none">
+        <span style="display:flex;flex-direction:column;gap:4px"><span style="font-size:15px;font-weight:500">{{ r.name }}</span><span style="font-size:12px;color:#6B6761">{{ r.type }}</span></span>
+        <span style="font:400 12px/1 'JetBrains Mono',monospace">{{ r.priceFmt }}</span>
+      </a>
+    </sc-for>
+  </div>
+  <sc-if value="{{ noResults }}" hint-placeholder-val="{{ false }}">
+    <p style="margin:24px 0 0;font-size:14px;color:#6B6761">Nothing matches that yet. Try “bench” or “walnut”.</p>
+  </sc-if>
+</div>
+
+<div onClick="{{ closeCart }}" style="position:fixed;inset:0;z-index:70;background:rgba(18,17,16,.42);opacity:{{ cartOp }};pointer-events:{{ cartPE }};transition:opacity .6s ease"></div>
+<aside style="position:fixed;top:0;right:0;bottom:0;z-index:71;width:min(460px,100vw);background:#F7F5F1;color:#1C1B19;font-family:'Archivo',sans-serif;display:flex;flex-direction:column;transform:{{ cartX }};transition:transform .75s cubic-bezier(.7,0,.2,1);box-shadow:-30px 0 60px rgba(0,0,0,.08)">
+  <div style="display:flex;justify-content:space-between;align-items:center;padding:24px 28px;border-bottom:1px solid rgba(28,27,25,.12)">
+    <span style="font-weight:500;font-size:15px;letter-spacing:.02em">Your bag <span style="font:400 12px/1 'JetBrains Mono',monospace;color:#6B6761;margin-left:6px">({{ count }})</span></span>
+    <button onClick="{{ closeCart }}" style="appearance:none;background:none;border:0;font:500 11px/1 'Archivo',sans-serif;letter-spacing:.14em;text-transform:uppercase;color:#1C1B19;cursor:pointer;padding:12px 0">Close</button>
+  </div>
+  <div style="flex:1;overflow:auto;padding:0 28px">
+    <sc-if value="{{ empty }}" hint-placeholder-val="{{ true }}">
+      <div style="padding:64px 0;display:flex;flex-direction:column;gap:20px;align-items:flex-start">
+        <p style="margin:0;font-family:'Instrument Serif',serif;font-size:34px;line-height:1.1">Your bag is empty.</p>
+        <a href="Shop.dc.html" style="color:#1C1B19;font-size:13px;letter-spacing:.06em;text-underline-offset:5px">Continue to the shop</a>
+      </div>
+    </sc-if>
+    <sc-for list="{{ lines }}" as="l" hint-placeholder-count="0">
+      <div style="display:grid;grid-template-columns:96px 1fr;gap:18px;padding:22px 0;border-bottom:1px solid rgba(28,27,25,.1)">
+        <div style="position:relative;width:96px;height:120px;background:#E7E2DA;color:#8C877F">
+          <image-slot id="{{ l.slotId }}" shape="rect" placeholder="Product" style="position:absolute;inset:0;width:100%;height:100%"></image-slot>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:6px;min-width:0">
+          <div style="display:flex;justify-content:space-between;gap:12px"><a href="{{ l.href }}" style="color:inherit;text-decoration:none;font-size:15px;font-weight:500">{{ l.name }}</a><span style="font:400 13px/1.4 'JetBrains Mono',monospace">{{ l.lineFmt }}</span></div>
+          <span style="font-size:12px;color:#6B6761">{{ l.type }} · {{ l.color }}</span>
+          <div style="margin-top:auto;display:flex;justify-content:space-between;align-items:center">
+            <div style="display:flex;align-items:center;border:1px solid rgba(28,27,25,.2);height:36px">
+              <button onClick="{{ l.dec }}" aria-label="Decrease" style="appearance:none;background:none;border:0;width:36px;height:34px;cursor:pointer;font-size:16px;color:#1C1B19">−</button>
+              <span style="min-width:22px;text-align:center;font:400 12px/1 'JetBrains Mono',monospace">{{ l.qty }}</span>
+              <button onClick="{{ l.inc }}" aria-label="Increase" style="appearance:none;background:none;border:0;width:36px;height:34px;cursor:pointer;font-size:16px;color:#1C1B19">+</button>
+            </div>
+            <button onClick="{{ l.remove }}" style="appearance:none;background:none;border:0;font-size:12px;color:#6B6761;text-decoration:underline;text-underline-offset:4px;cursor:pointer;padding:8px 0">Remove</button>
+          </div>
+        </div>
+      </div>
+    </sc-for>
+  </div>
+  <sc-if value="{{ hasLines }}" hint-placeholder-val="{{ false }}">
+    <div style="padding:24px 28px 28px;border-top:1px solid rgba(28,27,25,.12);display:flex;flex-direction:column;gap:14px">
+      <div style="display:flex;justify-content:space-between;font-size:15px;font-weight:500"><span>Subtotal</span><span style="font-family:'JetBrains Mono',monospace;font-weight:400">{{ subtotal }}</span></div>
+      <span style="font-size:12px;color:#6B6761">White-glove delivery included on equipment. Taxes calculated at checkout.</span>
+      <a href="Checkout.dc.html" data-magnetic="" style="display:flex;align-items:center;justify-content:center;height:56px;background:#1C1B19;color:#F2EFEA;text-decoration:none;font-size:13px;font-weight:500;letter-spacing:.12em;text-transform:uppercase;transform:translate(calc(var(--mx,0)*1px),calc(var(--my,0)*1px));transition:transform .3s ease,background .3s ease" style-hover="background:#000">Checkout</a>
+    </div>
+  </sc-if>
+</aside>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:&quot;100%&quot;,&quot;height&quot;:&quot;76px&quot;},&quot;current&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;&quot;,&quot;shop&quot;,&quot;gym&quot;,&quot;home&quot;,&quot;collections&quot;],&quot;default&quot;:&quot;&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;dark&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;}}">
+class Component extends DCLogic {
+  state = { menu: false, search: false, cart: false, q: '', dark: !!this.props.dark, scrolled: false, bump: false, vw: typeof window !== 'undefined' ? window.innerWidth : 1280, hidden: false };
+  searchRef = React.createRef();
+  componentDidMount() {
+    this.onCart = () => { this.setState({ bump: true }); clearTimeout(this.bt); this.bt = setTimeout(() => this.setState({ bump: false }), 320); };
+    this.onOpen = () => this.setState({ cart: true, search: false, menu: false });
+    this.onReady = () => this.forceUpdate();
+    this.lastY = window.scrollY;
+    this.onScroll = () => {
+      if (this.raf) return;
+      this.raf = requestAnimationFrame(() => {
+        this.raf = 0;
+        const y = window.scrollY;
+        let dark = !!this.props.dark;
+        document.querySelectorAll('[data-theme]').forEach(el => { const r = el.getBoundingClientRect(); if (r.top <= 38 && r.bottom > 38) dark = el.getAttribute('data-theme') === 'dark'; });
+        const hidden = y > 600 && y > this.lastY + 4 ? true : (y < this.lastY - 4 ? false : this.state.hidden);
+        this.lastY = y;
+        if (dark !== this.state.dark || (y > 8) !== this.state.scrolled || hidden !== this.state.hidden) this.setState({ dark, scrolled: y > 8, hidden });
+      });
+    };
+    this.onResize = () => this.setState({ vw: window.innerWidth });
+    this.onKey = e => { if (e.key === 'Escape') this.setState({ menu: false, search: false, cart: false }); };
+    window.addEventListener('halden:cart', this.onCart);
+    window.addEventListener('halden:open-cart', this.onOpen);
+    window.addEventListener('halden:ready', this.onReady);
+    window.addEventListener('scroll', this.onScroll, { passive: true });
+    window.addEventListener('resize', this.onResize);
+    window.addEventListener('keydown', this.onKey);
+    this.onScroll();
+    if (window.HALDEN) this.forceUpdate();
+  }
+  componentWillUnmount() {
+    window.removeEventListener('halden:cart', this.onCart);
+    window.removeEventListener('halden:open-cart', this.onOpen);
+    window.removeEventListener('halden:ready', this.onReady);
+    window.removeEventListener('scroll', this.onScroll);
+    window.removeEventListener('resize', this.onResize);
+    window.removeEventListener('keydown', this.onKey);
+  }
+  componentDidUpdate() {
+    const lock = this.state.menu || this.state.cart || this.state.search;
+    document.documentElement.style.overflow = lock ? 'hidden' : '';
+    if (this.state.search && !this._wasSearch) setTimeout(() => this.searchRef.current && this.searchRef.current.focus(), 300);
+    this._wasSearch = this.state.search;
+  }
+  renderVals() {
+    const H = window.HALDEN, s = this.state;
+    const isMobile = s.vw < 900;
+    const cur = this.props.current || '';
+    const nav = [
+      { label: 'Shop', href: 'Shop.dc.html', key: 'shop' },
+      { label: 'Gym', href: 'Shop.dc.html?line=gym', key: 'gym' },
+      { label: 'Home', href: 'Shop.dc.html?line=home', key: 'home' },
+      { label: 'Collections', href: 'Collections.dc.html', key: 'collections' }
+    ].map((n, i) => ({ ...n, num: i + 1, active: cur === n.key ? 1 : 0, delay: (0.15 + i * 0.07) + 's' }));
+    const overHero = s.dark && !s.scrolled;
+    const fg = s.dark ? '#F2EFEA' : '#1C1B19';
+    const bg = overHero ? 'transparent' : (s.dark ? 'rgba(21,20,19,.72)' : 'rgba(242,239,234,.86)');
+    const lines = H ? H.cart().map(l => ({
+      key: l.key, name: l.product.name, type: l.product.type, color: l.color, qty: l.qty,
+      slotId: 'p-' + l.id + '-1', href: 'Product.dc.html?id=' + l.id,
+      lineFmt: H.money(l.qty * l.product.price),
+      inc: () => H.setQty(l.key, l.qty + 1), dec: () => H.setQty(l.key, l.qty - 1), remove: () => H.remove(l.key)
+    })) : [];
+    const q = s.q.trim().toLowerCase();
+    const results = H ? (q ? H.products.filter(p => (p.name + ' ' + p.type + ' ' + p.category + ' ' + p.materials).toLowerCase().includes(q)) : H.products.filter(p => p.best)).slice(0, 8)
+      .map(p => ({ name: p.name, type: p.type, priceFmt: H.money(p.price), href: 'Product.dc.html?id=' + p.id })) : [];
+    return {
+      nav, isMobile, isDesktop: !isMobile, headH: isMobile ? '64px' : '76px',
+      fg, bg, blur: overHero ? 'none' : 'saturate(1.2) blur(14px)',
+      rule: overHero ? 'transparent' : (s.dark ? 'rgba(242,239,234,.08)' : 'rgba(28,27,25,.08)'),
+      headY: s.hidden && !s.menu ? 'translateY(-100%)' : 'translateY(0)',
+      count: H ? H.count() : 0, bumpScale: s.bump ? 1.45 : 1,
+      hoverOn: e => e.currentTarget.setAttribute('data-hover', '1'),
+      hoverOff: e => e.currentTarget.setAttribute('data-hover', '0'),
+      openMenu: () => this.setState({ menu: true }), closeMenu: () => this.setState({ menu: false }),
+      menuClip: s.menu ? 'inset(0 0 0 0)' : 'inset(0 0 100% 0)', menuPE: s.menu ? 'auto' : 'none',
+      menuItemY: s.menu ? 'translateY(0)' : 'translateY(110%)',
+      openSearch: () => this.setState({ search: true }), closeSearch: () => this.setState({ search: false }),
+      searchY: s.search ? 'translateY(0)' : 'translateY(-102%)', searchOp: s.search ? 1 : 0, searchPE: s.search ? 'auto' : 'none',
+      searchRef: this.searchRef, q: s.q, onQ: e => this.setState({ q: e.target.value }), results, noResults: !!q && results.length === 0,
+      openCart: () => this.setState({ cart: true }), closeCart: () => this.setState({ cart: false }),
+      cartX: s.cart ? 'translateX(0)' : 'translateX(102%)', cartOp: s.cart ? 1 : 0, cartPE: s.cart ? 'auto' : 'none',
+      lines, empty: lines.length === 0, hasLines: lines.length > 0, subtotal: H ? H.money(H.subtotal()) : ''
+    };
+  }
+}
+</script>
+</body>
+</html>

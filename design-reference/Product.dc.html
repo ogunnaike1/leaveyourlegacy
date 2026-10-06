@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<title>Product — HALDEN</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,300..700&amp;family=Instrument+Serif:ital@0;1&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap">
+<style>
+html,body{margin:0;background:#F7F5F1;-webkit-font-smoothing:antialiased}
+a{color:#1C1B19}a:hover{color:#000}
+::selection{background:#1C1B19;color:#F2EFEA}
+</style>
+<script src="./store.js"></script>
+<script src="./motion.js"></script>
+<script src="./image-slot.js"></script>
+</helmet>
+<div data-theme="light" style="font-family:'Archivo',sans-serif;color:#1C1B19;background:#F7F5F1">
+<dc-import name="SiteHeader" current="shop" hint-size="100%,0px"></dc-import>
+
+<section data-screen-label="Product hero" style="max-width:1680px;margin:0 auto;padding:clamp(88px,8vw,112px) clamp(20px,3.4vw,48px) clamp(72px,8vw,120px);display:flex;flex-wrap:wrap;gap:40px clamp(32px,5vw,96px);align-items:flex-start">
+  <div style="flex:1 1 560px;min-width:0;display:flex;gap:16px;flex-direction:{{ galDir }}">
+    <div style="display:flex;flex-direction:{{ thumbDir }};gap:10px;flex:none;overflow:auto;scrollbar-width:none">
+      <sc-for list="{{ views }}" as="v" hint-placeholder-count="5">
+        <button onClick="{{ v.pick }}" aria-label="{{ v.label }}" style="appearance:none;padding:0;border:0;background:#E8E4DD;width:72px;height:90px;flex:none;position:relative;cursor:pointer;color:#8C877F;outline:1px solid {{ v.outline }};outline-offset:3px;transition:outline-color .3s">
+          <span style="position:absolute;inset:0;display:flex;align-items:flex-end;padding:8px;font:400 9px/1.2 'JetBrains Mono',monospace;letter-spacing:.06em;text-transform:uppercase;color:#6B6761;text-align:left">{{ v.short }}</span>
+        </button>
+      </sc-for>
+    </div>
+    <div ref="{{ stageRef }}" data-cursor="{{ cursorLabel }}" onMouseMove="{{ onZoomMove }}" onMouseEnter="{{ onZoomIn }}" onMouseLeave="{{ onZoomOut }}" onPointerDown="{{ onSpinDown }}" style="position:relative;flex:1;min-width:0;aspect-ratio:4 / 5;max-height:calc(100vh - 140px);background:#E8E4DD;overflow:hidden;touch-action:{{ touchAction }}">
+      <sc-for list="{{ views }}" as="v" hint-placeholder-count="1">
+        <div style="position:absolute;inset:0;opacity:{{ v.op }};transition:opacity .8s ease;color:#8C877F;pointer-events:{{ v.pe }}">
+          <div style="position:absolute;inset:0;transform-origin:{{ zoomOrigin }};transform:scale({{ v.scale }});transition:transform .6s cubic-bezier(.2,.7,.2,1)">
+            <image-slot id="{{ v.slot }}" shape="rect" placeholder="{{ v.cap }}" style="position:absolute;inset:0;width:100%;height:100%"></image-slot>
+          </div>
+        </div>
+      </sc-for>
+      <sc-if value="{{ isSpin }}" hint-placeholder-val="{{ false }}">
+        <div style="position:absolute;inset:0;background:#E3DED6;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:28px;user-select:none;cursor:grab">
+          <div style="position:relative;width:min(60%,340px);aspect-ratio:1;border-radius:50%;border:1px solid rgba(28,27,25,.18)">
+            <div style="position:absolute;left:50%;top:50%;width:1px;height:50%;background:#1C1B19;transform-origin:top;transform:translateX(-50%) rotate({{ spinDeg }}deg)"></div>
+            <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px">
+              <span style="font:400 40px/1 'JetBrains Mono',monospace">{{ spinAngle }}°</span>
+              <span style="font:400 10px/1 'JetBrains Mono',monospace;letter-spacing:.1em;text-transform:uppercase;color:#6B6761">Frame {{ spinFrame }} / 36</span>
+            </div>
+          </div>
+          <span style="max-width:300px;text-align:center;font:400 10px/1.6 'JetBrains Mono',monospace;letter-spacing:.08em;text-transform:uppercase;color:#6B6761">360° viewer — drag to rotate. Supply a 36-frame render sequence in product.spin to replace this guide.</span>
+        </div>
+      </sc-if>
+      <div style="position:absolute;left:16px;bottom:16px;display:flex;gap:8px;pointer-events:none">
+        <span style="font:400 10px/1 'JetBrains Mono',monospace;letter-spacing:.1em;text-transform:uppercase;color:#4A4743;background:rgba(247,245,241,.85);padding:7px 10px">{{ viewLabel }}</span>
+      </div>
+    </div>
+  </div>
+
+  <div style="flex:1 1 380px;max-width:520px;position:sticky;top:110px;display:flex;flex-direction:column;gap:28px">
+    <div style="display:flex;gap:8px;font:400 11px/1 'JetBrains Mono',monospace;letter-spacing:.1em;text-transform:uppercase;color:#6B6761">
+      <a href="Shop.dc.html" style="color:inherit;text-decoration:none">Shop</a><span>/</span><a href="{{ catHref }}" style="color:inherit;text-decoration:none">{{ category }}</a>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:14px">
+      <h1 style="margin:0;font-weight:500;font-stretch:82%;font-size:clamp(48px,5.4vw,92px);line-height:.88;letter-spacing:-.03em;text-transform:uppercase">{{ name }}</h1>
+      <div style="display:flex;justify-content:space-between;align-items:baseline;gap:16px;flex-wrap:wrap">
+        <span style="font-size:15px;color:#4A4743">{{ type }}</span>
+        <a href="#details" style="font-size:13px;color:#4A4743;text-decoration:none">★ {{ rating }} <span style="text-decoration:underline;text-underline-offset:4px">{{ reviews }} reviews</span></a>
+      </div>
+    </div>
+    <span style="font:400 22px/1 'JetBrains Mono',monospace">{{ price }}</span>
+    <p style="margin:0;font-size:16px;line-height:1.65;color:#3A3835;text-wrap:pretty">{{ desc }}</p>
+    <div style="display:flex;flex-direction:column;gap:14px;padding-top:24px;border-top:1px solid rgba(28,27,25,.12)">
+      <div style="display:flex;justify-content:space-between;font-size:13px"><span style="color:#6B6761">Finish</span><span style="font-weight:500">{{ colorName }}</span></div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap">
+        <sc-for list="{{ colors }}" as="c" hint-placeholder-count="3">
+          <button onClick="{{ c.pick }}" aria-label="{{ c.name }}" style="appearance:none;width:40px;height:40px;border-radius:50%;padding:0;border:1px solid {{ c.ring }};background:#F7F5F1;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:border-color .3s">
+            <span style="width:30px;height:30px;border-radius:50%;background:{{ c.hex }};box-shadow:inset 0 0 0 1px rgba(0,0,0,.12)"></span>
+          </button>
+        </sc-for>
+      </div>
+    </div>
+    <div style="display:flex;gap:10px">
+      <div style="display:flex;align-items:center;border:1px solid rgba(28,27,25,.25);height:58px;flex:none">
+        <button onClick="{{ dec }}" aria-label="Decrease" style="appearance:none;background:none;border:0;width:46px;height:56px;cursor:pointer;font-size:18px;color:#1C1B19">−</button>
+        <span style="min-width:28px;text-align:center;font:400 14px/1 'JetBrains Mono',monospace">{{ qty }}</span>
+        <button onClick="{{ inc }}" aria-label="Increase" style="appearance:none;background:none;border:0;width:46px;height:56px;cursor:pointer;font-size:18px;color:#1C1B19">+</button>
+      </div>
+      <button onClick="{{ addToBag }}" data-magnetic="" style="flex:1;height:58px;border:0;background:#1C1B19;color:#F2EFEA;font:500 12px/1 'Archivo',sans-serif;letter-spacing:.14em;text-transform:uppercase;cursor:pointer;display:flex;align-items:center;justify-content:space-between;padding:0 22px;transform:translate(calc(var(--mx,0) * 1px),calc(var(--my,0) * 1px));transition:transform .35s ease,background .3s" style-hover="background:#000">
+        <span>{{ addLabel }}</span><span style="font-family:'JetBrains Mono',monospace;letter-spacing:0">{{ lineTotal }}</span>
+      </button>
+    </div>
+    <button onClick="{{ buyNow }}" style="height:58px;border:1px solid #1C1B19;background:transparent;color:#1C1B19;font:500 12px/1 'Archivo',sans-serif;letter-spacing:.14em;text-transform:uppercase;cursor:pointer;margin-top:-18px;transition:background .3s,color .3s" style-hover="background:#1C1B19;color:#F2EFEA">Buy now</button>
+    <div style="display:flex;flex-direction:column;gap:10px;font-size:13px;color:#4A4743">
+      <span style="display:flex;gap:10px;align-items:center"><span style="width:6px;height:6px;border-radius:50%;background:{{ stockDot }}"></span>{{ stock }}</span>
+      <span>White-glove delivery and installation included. 30-day trial in your home.</span>
+    </div>
+  </div>
+</section>
+
+<section id="details" data-screen-label="Product details" style="max-width:1680px;margin:0 auto;padding:0 clamp(20px,3.4vw,48px) clamp(96px,10vw,160px);display:flex;flex-wrap:wrap;gap:40px clamp(32px,5vw,96px)">
+  <div style="flex:1 1 360px;display:flex;flex-direction:column;gap:20px">
+    <span style="font:400 11px/1 'JetBrains Mono',monospace;letter-spacing:.14em;text-transform:uppercase;color:#6B6761">Details</span>
+    <h2 style="margin:0;font-family:'Instrument Serif',serif;font-weight:400;font-size:clamp(36px,3.6vw,56px);line-height:1.05;max-width:440px">Everything you would ask in the showroom.</h2>
+  </div>
+  <div style="flex:1.4 1 520px;border-top:1px solid rgba(28,27,25,.14)">
+    <sc-for list="{{ accordion }}" as="a" hint-placeholder-count="5">
+      <div style="border-bottom:1px solid rgba(28,27,25,.14)">
+        <button onClick="{{ a.toggle }}" style="appearance:none;width:100%;background:none;border:0;padding:24px 0;display:grid;grid-template-columns:48px 1fr 20px;align-items:center;cursor:pointer;color:#1C1B19;text-align:left">
+          <span style="font:400 11px/1 'JetBrains Mono',monospace;color:#6B6761">{{ a.num }}</span>
+          <span style="font-size:18px;font-weight:500">{{ a.title }}</span>
+          <span style="font-size:20px;font-weight:300;transform:rotate({{ a.rot }});transition:transform .5s cubic-bezier(.2,.7,.2,1)">+</span>
+        </button>
+        <sc-if value="{{ a.open }}" hint-placeholder-val="{{ false }}">
+          <p style="margin:0;padding:0 0 28px 48px;max-width:620px;font-size:15px;line-height:1.7;color:#3A3835;text-wrap:pretty">{{ a.body }}</p>
+        </sc-if>
+      </div>
+    </sc-for>
+  </div>
+</section>
+
+<section data-theme="dark" data-screen-label="Designed for your space" style="position:relative;height:110vh;min-height:640px;overflow:hidden;background:#1A1917;color:#F2EFEA">
+  <div data-parallax=".14" style="position:absolute;left:0;right:0;top:-12%;bottom:-12%;transform:translateY(var(--py,0px));color:#6E6A63">
+    <image-slot id="{{ spaceSlot }}" shape="rect" placeholder="{{ spaceCap }}" style="position:absolute;inset:0;width:100%;height:100%"></image-slot>
+  </div>
+  <div style="position:absolute;inset:0;pointer-events:none;background:linear-gradient(90deg,rgba(18,17,16,.7) 0%,rgba(18,17,16,.15) 55%,rgba(18,17,16,0) 100%)"></div>
+  <div data-reveal="" style="position:absolute;left:clamp(20px,3.4vw,48px);bottom:clamp(56px,9vw,120px);max-width:560px;display:flex;flex-direction:column;gap:24px;pointer-events:none">
+    <span style="font:400 11px/1 'JetBrains Mono',monospace;letter-spacing:.14em;text-transform:uppercase;color:#C9C2B8">In residence</span>
+    <h2 style="margin:0;font-weight:500;font-stretch:82%;font-size:clamp(48px,7vw,120px);line-height:.88;letter-spacing:-.03em;text-transform:uppercase">
+      <span style="display:block;overflow:hidden;padding:0 .1em .04em 0;margin-right:-.1em"><span style="display:block;transform:translateY(calc((1 - var(--in,0)) * 108%));transition:transform 1.5s cubic-bezier(.2,.7,.1,1)">Designed for</span></span>
+      <span style="display:block;overflow:hidden;padding:0 .1em .04em 0;margin-right:-.1em"><span style="display:block;transform:translateY(calc((1 - var(--in,0)) * 108%));transition:transform 1.5s cubic-bezier(.2,.7,.1,1) .1s">your space.</span></span>
+    </h2>
+    <p style="margin:0;font-size:16px;line-height:1.6;color:#D9D3CA;max-width:420px;opacity:var(--in,0);transition:opacity 1.2s ease .5s">Our studio plans rooms free of charge — layout, flooring, light and clearances — before anything ships.</p>
+  </div>
+</section>
+
+<section data-screen-label="Related" style="max-width:1680px;margin:0 auto;padding:clamp(88px,10vw,150px) clamp(20px,3.4vw,48px)">
+  <div style="display:flex;justify-content:space-between;align-items:flex-end;gap:24px;padding-bottom:28px;margin-bottom:48px;border-bottom:1px solid rgba(28,27,25,.14)">
+    <h2 style="margin:0;font-weight:500;font-stretch:82%;font-size:clamp(36px,4vw,64px);line-height:.92;letter-spacing:-.03em;text-transform:uppercase">Pairs well with</h2>
+    <a href="Shop.dc.html" style="color:#1C1B19;font-size:13px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;text-underline-offset:6px">Shop all</a>
+  </div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(min(calc(50% - 10px),290px),1fr));gap:56px 20px">
+    <sc-for list="{{ related }}" as="r" hint-placeholder-count="4">
+      <dc-import name="ProductCard" pid="{{ r.id }}" hint-size="100%,460px"></dc-import>
+    </sc-for>
+  </div>
+</section>
+
+<dc-import name="SiteFooter" hint-size="100%,900px"></dc-import>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  constructor(p) {
+    super(p);
+    this.state = { id: new URLSearchParams(location.search).get('id') || 'form-bench', view: 0, color: null, qty: 1, zoom: false, ox: 50, oy: 50, spin: 0, added: false, open: 0, vw: window.innerWidth };
+  }
+  stageRef = React.createRef();
+  componentDidMount() {
+    this.onReady = () => this.forceUpdate();
+    this.onResize = () => this.setState({ vw: window.innerWidth });
+    window.addEventListener('halden:ready', this.onReady);
+    window.addEventListener('resize', this.onResize);
+    const boot = () => { if (window.HALDEN_MOTION) window.HALDEN_MOTION.start(); else setTimeout(boot, 50); };
+    boot();
+    if (window.HALDEN) this.forceUpdate();
+  }
+  componentWillUnmount() { window.removeEventListener('halden:ready', this.onReady); window.removeEventListener('resize', this.onResize); clearTimeout(this.t); }
+  renderVals() {
+    const H = window.HALDEN, s = this.state, m = s.vw < 900;
+    const p = H ? (H.byId(s.id) || H.products[0]) : null;
+    const name = p ? p.name : '';
+    const angles = [['Front ¾', 'studio, front three-quarter'], ['Profile', 'side profile, raking light'], ['Detail', 'material close-up'], ['In room', 'installed in a finished space'], ['360°', '']];
+    const isSpin = s.view === 4;
+    const views = angles.map((a, i) => ({
+      short: a[0], label: a[0], slot: 'p-' + (p ? p.id : 'x') + '-' + (i + 1), cap: name + ' · ' + a[1],
+      op: s.view === i && i < 4 ? 1 : 0, pe: s.view === i && i < 4 ? 'auto' : 'none',
+      scale: s.zoom && s.view === i && i < 4 ? 2 : 1,
+      outline: s.view === i ? '#1C1B19' : 'transparent',
+      pick: () => this.setState({ view: i, zoom: false })
+    }));
+    const color = s.color || (p ? p.colors[0].name : '');
+    const frame = Math.round(((s.spin % 360) + 360) % 360 / 10) % 36;
+    const related = H && p ? H.products.filter(x => x.id !== p.id && (x.category === p.category || x.line === p.line)).slice(0, 4) : [];
+    const accordion = p ? [
+      ['Description', p.desc + ' Designed in Zürich and built in small batches by partner workshops in northern Italy and southern Germany.'],
+      ['Dimensions', p.dims],
+      ['Materials', p.materials],
+      ['Delivery', 'Equipment is delivered by our own two-person team, carried to the room, assembled, levelled and packaging removed. Typical lead time is 2–3 weeks in Europe and North America; made-to-order pieces 6–8 weeks.'],
+      ['Warranty', '10 years on frames and welds, 3 years on upholstery, moving parts and electronics. Parts and refinishing are available for the life of the product.']
+    ] : [];
+    return {
+      galDir: m ? 'column-reverse' : 'row', thumbDir: m ? 'row' : 'column',
+      views, isSpin, stageRef: this.stageRef,
+      cursorLabel: isSpin ? 'Drag' : (s.zoom ? 'Close' : 'Zoom'),
+      touchAction: isSpin ? 'none' : 'auto',
+      zoomOrigin: s.ox + '% ' + s.oy + '%',
+      onZoomIn: () => {}, onZoomOut: () => this.state.zoom && this.setState({ zoom: false }),
+      onZoomMove: e => {
+        if (isSpin || !this.state.zoom) return;
+        const r = e.currentTarget.getBoundingClientRect();
+        this.setState({ ox: ((e.clientX - r.left) / r.width) * 100, oy: ((e.clientY - r.top) / r.height) * 100 });
+      },
+      onSpinDown: e => {
+        if (!isSpin) {
+          if (e.pointerType === 'mouse') { const r = e.currentTarget.getBoundingClientRect(); this.setState({ zoom: !this.state.zoom, ox: ((e.clientX - r.left) / r.width) * 100, oy: ((e.clientY - r.top) / r.height) * 100 }); }
+          return;
+        }
+        const x0 = e.clientX, a0 = this.state.spin;
+        const mv = ev => this.setState({ spin: a0 + (ev.clientX - x0) * 0.6 });
+        const up = () => { removeEventListener('pointermove', mv); removeEventListener('pointerup', up); };
+        addEventListener('pointermove', mv); addEventListener('pointerup', up);
+      },
+      spinDeg: s.spin, spinAngle: Math.round(((s.spin % 360) + 360) % 360), spinFrame: String(frame + 1).padStart(2, '0'),
+      viewLabel: angles[s.view][0] + (s.zoom ? ' · 2×' : ''),
+      name, type: p ? p.type : '', category: p ? p.category : '', catHref: 'Shop.dc.html?c=' + (p ? p.category : ''),
+      rating: p ? p.rating.toFixed(1) : '', reviews: p ? p.reviews : '', price: p ? H.money(p.price) : '', desc: p ? p.desc : '',
+      colorName: color,
+      colors: p ? p.colors.map(c => ({ name: c.name, hex: c.hex, ring: c.name === color ? '#1C1B19' : 'transparent', pick: () => this.setState({ color: c.name }) })) : [],
+      qty: s.qty, inc: () => this.setState({ qty: s.qty + 1 }), dec: () => this.setState({ qty: Math.max(1, s.qty - 1) }),
+      lineTotal: p ? H.money(p.price * s.qty) : '',
+      addLabel: s.added ? 'Added to bag ✓' : 'Add to bag',
+      addToBag: () => { if (!p) return; H.add(p.id, color, s.qty); this.setState({ added: true }); clearTimeout(this.t); this.t = setTimeout(() => this.setState({ added: false }), 2000); },
+      buyNow: () => { if (!p) return; H.add(p.id, color, s.qty, false); location.href = 'Checkout.dc.html'; },
+      stock: p ? (p.stock === 'Made to order' ? 'Made to order · ships in 6–8 weeks' : p.stock === 'Low stock' ? 'Low stock · ships in 1 week' : 'In stock · ships in 2 weeks') : '',
+      stockDot: p && p.stock === 'In stock' ? '#5E7A5A' : '#B08A4E',
+      accordion: accordion.map((a, i) => ({ title: a[0], body: a[1], num: '0' + (i + 1), open: s.open === i, rot: s.open === i ? '45deg' : '0deg', toggle: () => this.setState({ open: s.open === i ? -1 : i }) })),
+      spaceSlot: 'p-' + (p ? p.id : 'x') + '-space', spaceCap: name + ' · wide interior, modern home gym',
+      related: related.map(x => ({ id: x.id }))
+    };
+  }
+}
+</script>
+</body>
+</html>

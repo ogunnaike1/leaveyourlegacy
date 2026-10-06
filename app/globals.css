@@ -1,0 +1,52 @@
+/* Tailwind theme + utilities only — no preflight. The reference renders on browser defaults
+   (content-box inputs, UA link underlines, button chrome reset per element), so a global reset
+   would change box sizes. Every element sets the same declarations the prototype set. */
+@layer theme, base, components, utilities;
+@import "tailwindcss/theme.css" layer(theme);
+@import "tailwindcss/utilities.css" layer(utilities);
+
+@theme {
+  --font-sans: var(--font-archivo), sans-serif;
+  --font-serif: var(--font-instrument), serif;
+  --font-mono: var(--font-jetbrains), monospace;
+
+  --color-stone: #F2EFEA;
+  --color-paper: #F7F5F1;
+  --color-sand: #EFEBE5;
+  --color-beige: #E5DCCF;
+  --color-beige-ink: #2A2520;
+  --color-beige-muted: #6B6258;
+  --color-beige-body: #4E463E;
+  --color-charcoal: #1C1B19;
+  --color-hero: #141311;
+  --color-story: #1A1917;
+  --color-night: #121110;
+  --color-grey-body: #4A4743;
+  --color-grey-muted: #6B6761;
+  --color-dark-muted: #9C978F;
+  --color-dark-muted-2: #8A857D;
+  --color-on-dark: #D9D3CA;
+  --color-on-dark-2: #C9C2B8;
+  --color-on-dark-3: #B9B3AA;
+  --color-stock-in: #5E7A5A;
+  --color-stock-low: #B08A4E;
+}
+
+@layer base {
+  html, body { margin: 0; -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
+  body { background: #F2EFEA; }
+  a { color: #1C1B19; }
+  a:hover { color: #000; }
+  ::selection { background: #1C1B19; color: #F2EFEA; }
+}
+
+@keyframes hdCue { 0% { transform: translateY(-100%) } 55%, 100% { transform: translateY(100%) } }
+
+/* Hidden scrollbars on rails, tabs and the filter panel (scrollbar-width:none in the reference). */
+.no-scrollbar { scrollbar-width: none; }
+.no-scrollbar::-webkit-scrollbar { display: none; }
+
+/* Reduced motion: reveals are shown immediately (the engine sets data-in at once) without easing in. */
+@media (prefers-reduced-motion: reduce) {
+  [data-reveal], [data-reveal] * { transition-duration: 0s !important; transition-delay: 0s !important; }
+}
