@@ -7,6 +7,8 @@ import { hover } from '@/components/motion/hover';
 import { magnetic, magneticTransform } from '@/components/motion/Magnetic';
 import LineReveal from '@/components/motion/LineReveal';
 import { useVh, useVw } from '@/lib/use-vw';
+import { byId } from '@/lib/catalogue';
+import { money } from '@/lib/format';
 
 const HeroScene = dynamic(() => import('./HeroScene'), { ssr: false });
 
@@ -86,7 +88,7 @@ export default function Hero() {
           style={{ opacity: 'clamp(0,calc((var(--hp,0) - .76) * 6),1)', transform: 'translateY(calc((1 - var(--hp,0)) * 60px))', pointerEvents: stage === 2 ? 'auto' : 'none' }}
         >
           <div className="flex flex-col gap-[10px]">
-            <span className="[font:400_11px/1_var(--font-mono)] tracking-[.14em] uppercase text-[#C9C2B8]">From $1,890 · Ships in 2 weeks</span>
+            <span className="[font:400_11px/1_var(--font-mono)] tracking-[.14em] uppercase text-[#C9C2B8]">From {money(byId('form-bench')!.price)} · Ships in 2 weeks</span>
             <span className="font-serif italic text-[clamp(56px,8vw,128px)] leading-[.9] tracking-[-.01em]">The Form Bench</span>
           </div>
           <Link

@@ -3,11 +3,19 @@ import { Archivo, Instrument_Serif, JetBrains_Mono } from 'next/font/google';
 import MotionRoot from '@/components/motion/MotionRoot';
 import './globals.css';
 
-// adjustFontFallback is off so glyphs outside the latin subset (→ ← ✓ ★) fall back to the generic
-// sans/serif/monospace faces exactly as they do in the reference, not to a metric-adjusted Arial.
-const archivo = Archivo({ subsets: ['latin'], axes: ['wdth'], variable: '--font-archivo', display: 'swap', adjustFontFallback: false });
-const instrument = Instrument_Serif({ subsets: ['latin'], weight: '400', style: ['normal', 'italic'], variable: '--font-instrument', display: 'swap', adjustFontFallback: false });
-const jetbrains = JetBrains_Mono({ subsets: ['latin'], weight: ['400', '500'], variable: '--font-jetbrains', display: 'swap', adjustFontFallback: false });
+const archivo = Archivo({ subsets: ['latin'], axes: ['wdth'], variable: '--font-archivo', display: 'swap' });
+const instrument = Instrument_Serif({ subsets: ['latin'], weight: '400', style: ['normal', 'italic'], variable: '--font-instrument', display: 'swap' });
+const jetbrains = JetBrains_Mono({ subsets: ['latin'], weight: ['400', '500'], variable: '--font-jetbrains', display: 'swap' });
+
+// Glyphs outside the latin subset (→ ← ✓ ★) must fall back to the generic sans/serif/monospace faces, as they
+// do in the reference — not to next/font's metric-adjusted Arial, which draws a much wider arrow. So the font
+// variables carry only the primary family; the generic fallback is appended in globals.css.
+const primary = (f: { style: { fontFamily: string } }) => f.style.fontFamily.split(',')[0];
+const fontVars = {
+  '--font-archivo': primary(archivo),
+  '--font-instrument': primary(instrument),
+  '--font-jetbrains': primary(jetbrains)
+} as React.CSSProperties;
 
 export const metadata: Metadata = {
   title: 'HALDEN — Performance without compromise',
@@ -16,7 +24,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${archivo.variable} ${instrument.variable} ${jetbrains.variable}`}>
+    <html lang="en" className={`${archivo.variable} ${instrument.variable} ${jetbrains.variable}`} style={fontVars}>
       <body>
         {children}
         <MotionRoot />

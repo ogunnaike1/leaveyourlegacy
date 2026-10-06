@@ -111,7 +111,7 @@ export default function ShopView({ init }: { init: ShopInit }) {
 
   return (
     <>
-      <Header current={(line || 'shop') as 'shop' | 'gym' | 'home'} />
+      <Header current={line === 'gym' ? 'gym' : 'shop'} />
 
       <section data-screen-label="Shop header" className="p-[clamp(120px,14vw,200px)_clamp(20px,3.4vw,48px)_0] max-w-[1680px] mx-auto">
         <div data-reveal="" className="flex flex-wrap justify-between items-end gap-[24px_48px]">

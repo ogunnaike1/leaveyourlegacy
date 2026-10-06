@@ -12,7 +12,7 @@ import Philosophy from '@/components/home/Philosophy';
 export default function HomePage() {
   return (
     <div className="font-sans text-[#1C1B19] bg-[#F2EFEA]">
-      <Header dark />
+      <Header dark current="home" />
       <Hero />
       <CollectionsEditorial />
       <FeaturedGrid />

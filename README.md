@@ -40,9 +40,15 @@ lib/cart-store.ts                    Zustand cart (same API, persisted to localS
 | `data-hover="1"`     | `--h`             | set by the `hover` handlers                                    |
 | `data-cursor="Label"`| —                 | 84px stone disc, fine pointers only                            |
 
+## Prices
+
+HALDEN's products are fictional. Each price is set to the current online price of a comparable real product, recorded in the product's `ref` field in `lib/catalogue.ts` (name, URL, date checked). Three prices are sums of single items, because the real equivalent isn't sold as a set: Monolith Set, Recovery Set and Studio Towels. Re-check the `ref` URLs periodically, since retail prices change.
+
 ## Imagery
 
-All imagery is placeholder until photography exists. To add a shot, drop the file into `public/images/` and register it in `lib/images.ts` under its slot id. Examples of slot ids are `p-form-bench-1`, `story-2`, `col-cardio`, `collection-home`, `home-edit-hero`, `statement`, `philosophy-detail` and `hero-poster`. The slot then renders through `next/image` instead of its art-direction caption.
+The shop's product shots (`p-{id}-1` main, `p-{id}-2` hover angle) are stand-in Unsplash photos stored in `public/images/`. Photographer credits are in `IMAGE_CREDITS` in `lib/images.ts`. Replace them with real product photography when it exists.
+
+All other imagery is still placeholder. To add a shot, drop the file into `public/images/` and register it in `lib/images.ts` under its slot id. Examples of slot ids are `p-form-bench-1`, `story-2`, `col-cardio`, `collection-home`, `home-edit-hero`, `statement`, `philosophy-detail` and `hero-poster`. The slot then renders through `next/image` instead of its art-direction caption.
 
 - **Hero GLB:** `<HeroScene model="/models/form-bench.glb" />` replaces the procedural bench once the file exists in `public/models/`.
 - **360° sequence:** add `spin: string[]` (36 frames) to a product in `lib/catalogue.ts`.
