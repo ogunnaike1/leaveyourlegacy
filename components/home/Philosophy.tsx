@@ -12,7 +12,8 @@ export default function Philosophy() {
   return (
     <section id="philosophy" data-theme="light" data-screen-label="08 Philosophy" className="bg-[#F2EFEA] p-[clamp(96px,12vw,180px)_clamp(20px,3.4vw,48px)]">
       <div className="max-w-[1680px] mx-auto flex flex-wrap gap-[64px_clamp(40px,7vw,140px)] items-start">
-        <div className="flex-[1_1_420px] sticky top-[110px] flex flex-col gap-[40px]">
+        {/* Sticky only while the two columns sit side by side (≥1000px); stacked, it would overlap the principles. */}
+        <div className="flex-[1_1_420px] static min-[1000px]:sticky top-[110px] flex flex-col gap-[40px]">
           <div data-reveal="" className="flex flex-col gap-[24px]">
             <span className="[font:400_11px/1_var(--font-mono)] tracking-[.14em] uppercase text-[#6B6761]">Philosophy</span>
             <h2 className="m-0 font-medium [font-stretch:82%] text-[clamp(48px,6.8vw,124px)] leading-[.88] tracking-[-.03em] uppercase">

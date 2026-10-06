@@ -12,6 +12,7 @@ export function getMotion(): Engine {
   if (engine) return engine;
   const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const fine = matchMedia('(pointer: fine)').matches;
+  const clipped = new Set<Element>();
   let pins: Element[] = [], pars: Element[] = [], ticking = false, io: IntersectionObserver | null = null, cursor: HTMLDivElement | null = null;
   // Vars live in a private stylesheet (not inline styles) so React re-renders never wipe them.
   const sheet = document.createElement('style');
@@ -35,6 +36,10 @@ export function getMotion(): Engine {
       const inView = r.top < innerHeight * 0.95 && r.bottom > 0;
       if (reduced || !io) el.setAttribute('data-in', '');
       else if (inView) setTimeout(() => el.setAttribute('data-in', ''), 60);
+      // IntersectionObserver applies the target's own clip-path, so a clip-path reveal that starts fully
+      // clipped (inset(100% …)) never intersects. Those are checked geometrically in update() instead,
+      // with the same threshold (.12) and bottom margin (−8%).
+      else if (getComputedStyle(el).clipPath !== 'none') clipped.add(el);
       else io.observe(el);
     });
     document.querySelectorAll('[data-magnetic]:not([data-mag])').forEach(bindMagnet);
@@ -54,6 +59,12 @@ export function getMotion(): Engine {
       if (r.bottom < -200 || r.top > vh + 200) return;
       const f = parseFloat(el.getAttribute('data-parallax') || '') || 0.1;
       setVar(el, '--py', ((r.top + r.height / 2 - vh / 2) * -f).toFixed(1) + 'px');
+    });
+    clipped.forEach(el => {
+      if (!el.isConnected) { clipped.delete(el); return; }
+      const r = el.getBoundingClientRect();
+      const visible = Math.min(r.bottom, vh * 0.92) - Math.max(r.top, 0);
+      if (r.height > 0 && visible / r.height >= 0.12) { el.setAttribute('data-in', ''); clipped.delete(el); }
     });
   }
   const onScroll = () => { if (!ticking) { ticking = true; requestAnimationFrame(update); } };
